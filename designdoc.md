@@ -85,32 +85,37 @@ Static JSON files capture the **curriculum** and **example data** in a human-edi
 learning_app/
 ├── index.html
 ├── main.js
-├── knowledge_graph/
-│   ├── index.json            <-- main entry point listing subject files
-│   ├── arithmetic.json       <-- topics & references for arithmetic
-│   ├── arithmetic/
-│   │   ├── single_digit_addition.json
-|   |   ├── single_digit_addition/
-│   │   |   ├── lesson.json
-│   │   |   ├── example1.json
-│   │   |   ├── example2.json
-│   │   |   ├── example3.json
-│   │   |   └── ...
-|   |   ├── adding_fractions_of_equal_denominators/
-│   │   |   ├── lesson.json
-│   │   |   ├── example1.json
-│   │   |   ├── example2.json
-│   │   |   └── ...
+├── knowledge_graphs/
+│   ├── blender/
 │   │   └── ...
-│   ├── algebra.json          <-- topics & references for algebra
-│   ├── algebra/
+│   ├── physics/
 │   │   └── ...
-│   ├── geometry.json         <-- topics & references for geometry
-│   ├── geometry/
-│   │   └── ...
-│   ├── calculus.json         <-- topics & references for calculus
-│   ├── calculus/
-│   │   └── ...
+│   ├── mathematics/
+│   │   ├── index.json            <-- main entry point listing subject files
+│   │   ├── arithmetic.json       <-- topics & references for arithmetic
+│   │   ├── arithmetic/
+│   │   |   ├── single_digit_addition.json
+│   │   |   ├── single_digit_addition/
+│   │   |   |   ├── lesson.json
+│   │   |   |   ├── example1.json
+│   │   |   |   ├── example2.json
+│   │   |   |   ├── example3.json
+│   │   |   |   └── ...
+│   |   |   ├── adding_fractions_of_equal_denominators/
+│   │   │   |   ├── lesson.json
+│   │   │   │   |   ├── example1.json
+│   │   |   │   ├── example2.json
+│   │   │   |   └── ...
+│   │   │   └── ...
+│   │   ├── algebra.json          <-- topics & references for algebra
+│   │   ├── algebra/
+│   │   │   └── ...
+│   │   ├── geometry.json         <-- topics & references for geometry
+│   │   ├── geometry/
+│   │   │   └── ...
+│   │   ├── calculus.json         <-- topics & references for calculus
+│   │   ├── calculus/
+│   │   │   └── ...
 │   └── ...
 └── ...
 ```
@@ -173,10 +178,13 @@ learning_app/
 
 ### 3.3 IndexedDB for Dynamic Data
 **IndexedDB** stores:
-- **Students**: ID, name, enrollment date.
-- **Progress**: mastery states, last review date, next review date.
-- **Review Queue**: a list of topics due soon.
-- **Lesson Attempts**: ephemeral data used while a lesson is in progress.
+- **Progress Data**: Student ID, name, enrollment date, and per-topic progress including:
+  - Interval (days until next review)
+  - Ease factor
+  - Number of successful reviews (reps)
+  - Last review date
+  - Next review date
+  - Last example shown
 
 #### 3.3.1 Data Model in IndexedDB
 - **`students` store** (keyPath: `id`):
@@ -192,6 +200,7 @@ learning_app/
         "reps": 4,       // Number of successful reviews
         "last_review": "2025-02-10",
         "next_review": "2025-02-26",
+        "last_example": "example_1"
       },
       "adding_fractions_of_equal_denominators": {
         "interval": 8,
@@ -199,6 +208,7 @@ learning_app/
         "reps": 2,
         "last_review": "2025-02-10", 
         "next_review": "2025-02-18",
+        "last_example": "example_2"
       },
       ...
     },
@@ -220,12 +230,11 @@ learning_app/
    - **Progress Overview**: A static percentage of topics completed under each relevant tag (e.g., "Algebra: 40%, Geometry: 55%").
    - No clickthrough or expansion.
 3. **Right Two-Thirds** (vertical stacking):
-   - **Pending Reviews (top)**:
+   - **Pending Reviews and Lessons mixed together**:
      - Lists up to **25 review tasks**. If 25 or more tasks are due, **no next lessons** are shown.
      - Each review task is clickable, leading to a review page or modal.
-   - **Next Lessons (below reviews)**:
-     - Randomly selected from the mastery frontier.
-     - If <25 reviews are pending, fill up the list to a total of 25 with next lessons.
+   - **Next Lessons (muxed with reviews)**:
+     - Selected from the "mastery frontier" acording to divisity weighting.
      - Each lesson is clickable, leading to a lesson view.
 
 ### 4.2 Lesson Structure
@@ -236,12 +245,12 @@ A lesson is split into three distinct segments:
 2. **Step 2: Worked Example**
    - An example problem. Possibly includes step-by-step math or diagrams rendered with MathJax.
    - No user interaction in MVP.
-3. **Step 3: 8 Practice Problems**
+3. **Step 3: Practice Problems (Around 8 for most skills)**
    - Multiple-choice for MVP.
    - Each problem has 4–5 options and a single correct choice.
    - The "Next" button is grayed out until the student selects an answer.
    - After each problem is answered, the system shows correctness, possibly a short explanation.
-   - Once all 8 are done, the lesson is marked complete.
+   - Once all are done, the lesson is marked complete.
 
 **Returning to Home:** After finishing the last problem, the student returns automatically to the home page. Incomplete lessons are not stored in IndexedDB—if the student leaves mid-lesson, it’s treated as never started.
 
@@ -394,7 +403,7 @@ Generally speaking, two lessons are considered very related if they are close in
 - **No reset**: If the user wants to start over, they manually import a blank state or use the dev tools to clear IndexedDB.
 
 ### 6.4 Spaced Repetition Algorithm (Advanced Notes)
-- Currently, the system schedules a **new review** for a topic X days after success. The exact intervals can be a simple geometric progression (2, 4, 8 days) or an advanced SM-2 approach.
+- Currently, the system schedules a **new review** for a topic X days after success based on a modified SM-2 algorithm.
 - Each topic’s difficulty can accelerate or slow the interval.
 - For **predictive remediation**, the system calculates average "time spent" or "fail rate" for that topic across all lessons; if above a threshold, it boosts prerequisite reviews.
 

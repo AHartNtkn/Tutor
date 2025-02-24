@@ -1,0 +1,528 @@
+:root {
+    /* Primary colors */
+    --primary-color: #6366f1;      /* Indigo 500 */
+    --secondary-color: #4f46e5;    /* Indigo 600 */
+    --accent-color: #a855f7;       /* Purple 500 */
+    
+    /* Background colors */
+    --background-color: #0f172a;   /* Slate 900 */
+    --card-background: #1e293b;    /* Slate 800 */
+    --content-background: #334155; /* Slate 700 */
+    
+    /* Text colors */
+    --text-color: #f8fafc;         /* Slate 50 */
+    --text-muted: #94a3b8;         /* Slate 400 */
+    --text-bright: #ffffff;        /* White */
+    
+    /* Border colors */
+    --border-color: #475569;       /* Slate 600 */
+    
+    /* Status colors */
+    --success-color: #22c55e;      /* Green 500 */
+    --error-color: #ef4444;        /* Red 500 */
+    --warning-color: #f59e0b;      /* Amber 500 */
+    
+    /* Layout */
+    --header-height: 60px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+header {
+    height: var(--header-height);
+    background-color: var(--card-background);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-bright);
+}
+
+.data-controls {
+    display: flex;
+    gap: 1rem;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    background-color: var(--card-background);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+button:hover {
+    background-color: var(--content-background);
+    border-color: var(--accent-color);
+    color: var(--text-bright);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+main {
+    display: flex;
+    margin-top: var(--header-height);
+    height: calc(100vh - var(--header-height));
+}
+
+.content-panel {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-bright);
+}
+
+h3 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text-bright);
+}
+
+.progress-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    margin-bottom: 0.75rem;
+    background-color: var(--content-background);
+}
+
+#cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.card {
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    padding: 1rem;
+    background-color: var(--card-background);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
+    border-color: var(--accent-color);
+}
+
+.card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-bright);
+}
+
+.card-description {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+/* For MathJax rendered content */
+.math-content {
+    overflow-x: auto;
+    padding: 1rem;
+    background-color: var(--content-background);
+    border-radius: 0.375rem;
+    margin: 1rem 0;
+    border: 1px solid var(--border-color);
+}
+
+/* Lesson and Review Views */
+.lesson-view,
+.review-view {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--background-color);
+    overflow-y: auto;
+    padding: 2rem;
+    z-index: 50;
+}
+
+.lesson-header,
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.back-button {
+    font-size: 1.125rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.back-button:hover {
+    color: var(--accent-color);
+}
+
+.lesson-content,
+.review-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.lesson-objectives {
+    margin-bottom: 2rem;
+    background-color: var(--card-background);
+    padding: 1.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid var(--border-color);
+}
+
+.objectives-list {
+    list-style-type: none;
+    padding-left: 1.5rem;
+}
+
+.objectives-list li {
+    position: relative;
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+}
+
+.objectives-list li::before {
+    content: "•";
+    position: absolute;
+    left: -1.5rem;
+    color: var(--accent-color);
+}
+
+.lesson-explanation,
+.lesson-example,
+.lesson-practice {
+    margin-bottom: 2rem;
+    background-color: var(--card-background);
+    padding: 1.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid var(--border-color);
+}
+
+.show-solution {
+    margin: 1rem 0;
+    background-color: var(--primary-color);
+    color: var(--text-bright);
+    border: none;
+}
+
+.show-solution:hover {
+    background-color: var(--secondary-color);
+}
+
+.problem-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.option-button {
+    padding: 1rem;
+    text-align: left;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    background-color: var(--content-background);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.option-button:hover {
+    background-color: var(--card-background);
+    border-color: var(--accent-color);
+}
+
+.option-button.selected {
+    border-color: var(--primary-color);
+    background-color: rgba(99, 102, 241, 0.2);
+}
+
+.option-button.correct {
+    border-color: var(--success-color);
+    background-color: rgba(34, 197, 94, 0.2);
+}
+
+.option-button.incorrect {
+    border-color: var(--error-color);
+    background-color: rgba(239, 68, 68, 0.2);
+}
+
+.practice-controls,
+.review-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+}
+
+.grade-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.grade-again {
+    background-color: var(--error-color);
+    color: var(--text-bright);
+    border: none;
+}
+
+.grade-hard {
+    background-color: var(--warning-color);
+    color: var(--text-bright);
+    border: none;
+}
+
+.grade-good {
+    background-color: var(--primary-color);
+    color: var(--text-bright);
+    border: none;
+}
+
+.grade-easy {
+    background-color: var(--success-color);
+    color: var(--text-bright);
+    border: none;
+}
+
+.problem-feedback {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 0.375rem;
+}
+
+.problem-feedback.correct {
+    background-color: rgba(34, 197, 94, 0.2);
+    border: 1px solid var(--success-color);
+}
+
+.problem-feedback.incorrect {
+    background-color: rgba(239, 68, 68, 0.2);
+    border: 1px solid var(--error-color);
+}
+
+.lesson-complete {
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--card-background);
+    border-radius: 0.375rem;
+    border: 1px solid var(--border-color);
+}
+
+.completion-message {
+    margin: 1rem 0;
+    color: var(--text-muted);
+}
+
+.hidden {
+    display: none;
+}
+
+/* Progress Details View */
+.progress-details-view {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--background-color);
+    overflow-y: auto;
+    padding: 2rem;
+    z-index: 50;
+}
+
+.progress-details-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.progress-details-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.progress-details-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.search-input,
+.filter-select {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    background-color: var(--card-background);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.search-input {
+    flex: 1;
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.filter-select {
+    min-width: 150px;
+}
+
+.progress-detail-item {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.progress-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.lesson-name {
+    margin: 0;
+    color: var(--text-bright);
+}
+
+.lesson-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.lesson-status.not-started {
+    background-color: var(--content-background);
+    color: var(--text-muted);
+}
+
+.lesson-status.started {
+    background-color: rgba(168, 85, 247, 0.2);
+    color: var(--accent-color);
+}
+
+.lesson-status.completed {
+    background-color: rgba(34, 197, 94, 0.2);
+    color: var(--success-color);
+}
+
+.progress-detail-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.progress-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.stat-value {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--text-bright);
+}
+
+.progress-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.date {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.date-label {
+    color: var(--text-muted);
+}
+
+.date-value {
+    color: var(--text-bright);
+}
+
+.icon-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--text-bright);
+    font-size: 1rem;
+}
+
+.icon-button:hover {
+    color: var(--accent-color);
+} 

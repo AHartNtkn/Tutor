@@ -1,0 +1,36 @@
+{
+    "topics": [
+        {
+            "id": "arithmetic_numbers",
+            "name": "Understanding Numbers",
+            "prerequisites": [],
+            "tags": ["arithmetic", "numbers"],
+            "content": "Introduction to numbers and counting.",
+            "directory": "arithmetic/numbers"
+        },
+        {
+            "id": "arithmetic_addition",
+            "name": "Basic Addition",
+            "prerequisites": ["arithmetic_numbers"],
+            "tags": ["arithmetic", "addition"],
+            "content": "Adding single-digit numbers.",
+            "directory": "arithmetic/addition"
+        },
+        {
+            "id": "arithmetic_basic_fractions",
+            "name": "Basic Fractions",
+            "prerequisites": ["arithmetic_numbers"],
+            "tags": ["arithmetic", "fractions"],
+            "content": "Understanding what fractions are and how to represent them.",
+            "directory": "arithmetic/basic_fractions"
+        },
+        {
+            "id": "arithmetic_adding_fractions_same_denominator",
+            "name": "Adding Fractions with Same Denominator",
+            "prerequisites": ["arithmetic_basic_fractions", "arithmetic_addition"],
+            "tags": ["arithmetic", "fractions", "addition"],
+            "content": "Learning to add fractions that have the same denominator.",
+            "directory": "arithmetic/adding_fractions_same_denominator"
+        }
+    ]
+} 

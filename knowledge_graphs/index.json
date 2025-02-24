@@ -1,0 +1,9 @@
+{
+    "knowledge_graphs": [
+        {
+            "id": "mathematics",
+            "name": "Mathematics",
+            "description": "Learn fundamental mathematical concepts from arithmetic to advanced topics"
+        }
+    ]
+} 

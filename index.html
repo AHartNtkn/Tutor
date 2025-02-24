@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Learning System</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- HTMX for dynamic updates -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+    <header>
+        <div class="user-info">
+            <span id="student-name">Student Name</span>
+            <span id="student-avatar">👤</span>
+            <button id="show-progress" class="icon-button">📊 Progress Details</button>
+        </div>
+        <div class="data-controls">
+            <button id="import-progress">Import Progress</button>
+            <button id="export-progress">Export Progress</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="content-panel">
+            <h2>Reviews & Lessons</h2>
+            <div id="cards-container">
+                <!-- Review and lesson cards will be dynamically inserted here -->
+            </div>
+        </section>
+
+        <!-- Progress Details View (hidden by default) -->
+        <section id="progress-details-view" class="progress-details-view hidden">
+            <div class="progress-details-header">
+                <button class="back-button">← Back</button>
+                <h2 class="view-title">Progress Details</h2>
+            </div>
+            
+            <div class="progress-details-content">
+                <div class="progress-details-filters">
+                    <input type="text" id="progress-search" placeholder="Search lessons..." class="search-input">
+                    <select id="progress-filter" class="filter-select">
+                        <option value="all">All Lessons</option>
+                        <option value="started">Started</option>
+                        <option value="not-started">Not Started</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+
+                <div class="progress-details-list">
+                    <!-- Progress details will be dynamically inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Lesson View (hidden by default) -->
+        <section id="lesson-view" class="lesson-view hidden">
+            <div class="lesson-header">
+                <button class="back-button">← Back</button>
+                <h2 class="lesson-title"></h2>
+            </div>
+            
+            <div class="lesson-content">
+                <div class="lesson-objectives">
+                    <h3>Objectives</h3>
+                    <ul class="objectives-list"></ul>
+                </div>
+
+                <div class="lesson-explanation">
+                    <h3>Explanation</h3>
+                    <div class="explanation-content math-content"></div>
+                </div>
+
+                <div class="lesson-example">
+                    <h3>Worked Example</h3>
+                    <div class="example-problem math-content"></div>
+                    <button class="show-solution">Show Solution</button>
+                    <div class="example-solution math-content hidden"></div>
+                    <div class="example-explanation math-content hidden"></div>
+                </div>
+
+                <div class="lesson-practice hidden">
+                    <h3>Practice Problems</h3>
+                    <div class="practice-problem math-content">
+                        <div class="problem-text"></div>
+                        <div class="problem-options"></div>
+                        <div class="problem-feedback hidden"></div>
+                    </div>
+                    <div class="practice-controls">
+                        <span class="problem-counter">Problem 1/8</span>
+                        <button class="submit-answer" disabled>Submit Answer</button>
+                        <button class="next-problem hidden">Next Problem</button>
+                    </div>
+                </div>
+
+                <div class="lesson-complete hidden">
+                    <h3>Lesson Complete! 🎉</h3>
+                    <p class="completion-message"></p>
+                    <button class="return-home">Return to Home</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Review View (hidden by default) -->
+        <section id="review-view" class="review-view hidden">
+            <div class="review-header">
+                <button class="back-button">← Back</button>
+                <h2 class="review-title"></h2>
+            </div>
+
+            <div class="review-content">
+                <div class="review-problem math-content">
+                    <div class="problem-text"></div>
+                    <div class="problem-options"></div>
+                    <div class="problem-feedback hidden"></div>
+                </div>
+
+                <div class="review-controls">
+                    <div class="grade-buttons hidden">
+                        <button class="grade-again">Again</button>
+                        <button class="grade-hard">Hard</button>
+                        <button class="grade-good">Good</button>
+                        <button class="grade-easy">Easy</button>
+                    </div>
+                    <button class="submit-answer">Submit Answer</button>
+                    <button class="next-review hidden">Next Review</button>
+                    <button class="finish-review hidden">Finish Review</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Templates for dynamic content -->
+    <template id="progress-item-template">
+        <div class="progress-item">
+            <span class="subject"></span>
+            <span class="percentage"></span>
+        </div>
+    </template>
+
+    <template id="card-template">
+        <div class="card">
+            <h3 class="card-title"></h3>
+            <p class="card-description"></p>
+            <div class="card-footer">
+                <span class="card-type"></span>
+                <span class="card-due"></span>
+            </div>
+        </div>
+    </template>
+
+    <template id="progress-detail-template">
+        <div class="progress-detail-item">
+            <div class="progress-detail-header">
+                <h3 class="lesson-name"></h3>
+                <span class="lesson-status"></span>
+            </div>
+            <div class="progress-detail-content">
+                <div class="progress-stats">
+                    <div class="stat">
+                        <span class="stat-label">Interval:</span>
+                        <span class="stat-value interval"></span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Ease:</span>
+                        <span class="stat-value ease"></span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Reviews:</span>
+                        <span class="stat-value reps"></span>
+                    </div>
+                </div>
+                <div class="progress-dates">
+                    <div class="date">
+                        <span class="date-label">Last Review:</span>
+                        <span class="date-value last-review"></span>
+                    </div>
+                    <div class="date">
+                        <span class="date-label">Next Review:</span>
+                        <span class="date-value next-review"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="main.js" type="module"></script>
+</body>
+</html> 
