@@ -877,12 +877,21 @@ class ReviewManager {
             `)
             .join('');
 
-        this.view.querySelector('.submit-answer').disabled = true;
+        // Reset all UI elements
+        const submitButton = this.view.querySelector('.submit-answer');
+        submitButton.disabled = true;
+        submitButton.classList.remove('hidden');
+
         this.view.querySelector('.problem-feedback').classList.add('hidden');
         this.view.querySelector('.grade-buttons').classList.add('hidden');
         this.view.querySelector('.next-review').classList.add('hidden');
         this.view.querySelector('.finish-review').classList.add('hidden');
+        
+        // Clear any previous answer selections and feedback
         this.selectedAnswer = null;
+        this.view.querySelectorAll('.option-button').forEach(btn => {
+            btn.classList.remove('selected', 'correct', 'incorrect');
+        });
 
         if (window.MathJax) {
             window.MathJax.typesetPromise();
