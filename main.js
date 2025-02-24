@@ -799,6 +799,8 @@ class ReviewManager {
         this.currentProblem = null;
         this.selectedAnswer = null;
         this.view = document.getElementById('review-view');
+        this.consecutiveCorrect = 0;
+        this.hadWrongAnswer = false;
         this.setupEventListeners();
     }
 
@@ -808,10 +810,9 @@ class ReviewManager {
         this.view.querySelector('.next-review').addEventListener('click', () => this.nextReview());
         this.view.querySelector('.finish-review').addEventListener('click', () => this.exit());
 
-        // Grade buttons
+        // Grade buttons - remove 'again' since wrong answers are now counted as 'again'
         const gradeButtons = this.view.querySelector('.grade-buttons');
         gradeButtons.addEventListener('click', (e) => {
-            if (e.target.classList.contains('grade-again')) this.gradeReview('again');
             if (e.target.classList.contains('grade-hard')) this.gradeReview('hard');
             if (e.target.classList.contains('grade-good')) this.gradeReview('good');
             if (e.target.classList.contains('grade-easy')) this.gradeReview('easy');
@@ -837,6 +838,9 @@ class ReviewManager {
                 problems: this.selectReviewProblems(lesson.practice_problems)
             };
 
+            this.consecutiveCorrect = 0;
+            this.hadWrongAnswer = false;
+
             // Show review view
             document.querySelector('.content-panel').classList.add('hidden');
             this.view.classList.remove('hidden');
@@ -853,10 +857,10 @@ class ReviewManager {
     }
 
     selectReviewProblems(problems) {
-        // For now, randomly select 2 problems
+        // Randomly select 3 problems initially
         return problems
             .sort(() => Math.random() - 0.5)
-            .slice(0, 2);
+            .slice(0, 3);
     }
 
     loadProblem(index) {
@@ -914,9 +918,38 @@ class ReviewManager {
             options[this.selectedAnswer].classList.add('incorrect');
         }
 
-        // Show grade buttons
+        // Update tracking variables
+        if (isCorrect) {
+            this.consecutiveCorrect++;
+        } else {
+            this.consecutiveCorrect = 0;
+            this.hadWrongAnswer = true;
+            // Add two more problems if we haven't reached the maximum
+            if (this.currentReview.problems.length < 5) {
+                const additionalProblems = this.currentReview.problems
+                    .filter(p => !this.currentReview.problems.includes(p))
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 2);
+                this.currentReview.problems.push(...additionalProblems);
+            }
+        }
+
+        // Hide submit button
         this.view.querySelector('.submit-answer').classList.add('hidden');
-        this.view.querySelector('.grade-buttons').classList.remove('hidden');
+
+        // If the answer was wrong, automatically treat it as 'again' and show next/finish button
+        if (!isCorrect) {
+            this.gradeReview('again');
+        } else {
+            // Show grade buttons for correct answers
+            const gradeButtons = this.view.querySelector('.grade-buttons');
+            gradeButtons.classList.remove('hidden');
+            // Remove the 'again' button from the UI
+            const againButton = gradeButtons.querySelector('.grade-again');
+            if (againButton) {
+                againButton.remove();
+            }
+        }
 
         // Refresh MathJax for the explanation
         if (window.MathJax) {
@@ -934,10 +967,27 @@ class ReviewManager {
 
         // Show next problem or finish
         this.view.querySelector('.grade-buttons').classList.add('hidden');
-        if (this.currentProblem !== this.currentReview.problems[this.currentReview.problems.length - 1]) {
-            this.view.querySelector('.next-review').classList.remove('hidden');
-        } else {
+
+        // Check if we should continue or finish
+        const isLastProblem = this.currentProblem === this.currentReview.problems[this.currentReview.problems.length - 1];
+        const hasThreeConsecutiveCorrect = this.consecutiveCorrect >= 3;
+        
+        if (hasThreeConsecutiveCorrect || (isLastProblem && !this.hadWrongAnswer)) {
             this.view.querySelector('.finish-review').classList.remove('hidden');
+        } else if (isLastProblem && this.hadWrongAnswer) {
+            // Add two more problems if we haven't reached the maximum
+            if (this.currentReview.problems.length < 5) {
+                const additionalProblems = this.currentReview.problems
+                    .filter(p => !this.currentReview.problems.includes(p))
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 2);
+                this.currentReview.problems.push(...additionalProblems);
+                this.view.querySelector('.next-review').classList.remove('hidden');
+            } else {
+                this.view.querySelector('.finish-review').classList.remove('hidden');
+            }
+        } else {
+            this.view.querySelector('.next-review').classList.remove('hidden');
         }
     }
 
