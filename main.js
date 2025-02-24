@@ -305,7 +305,7 @@ class ProgressDetailsManager {
             .forEach(subject => {
                 const totalLessons = subject.topics.length;
                 const completedLessons = subject.topics.filter(topic => 
-                    studentProgress[topic.id] && studentProgress[topic.id].reps >= 5
+                    studentProgress[topic.id] && studentProgress[topic.id].reps > 3
                 ).length;
 
                 // Check if it matches the filter
@@ -367,7 +367,7 @@ class ProgressDetailsManager {
                 
                 const progress = studentProgress[topic.id];
                 const status = !progress ? 'not-started' :
-                             progress.reps >= 5 ? 'completed' : 'started';
+                             progress.interval > 30 ? 'completed' : 'started';
                 
                 return matchesSearch && (filterValue === 'all' || status === filterValue);
             })
@@ -389,8 +389,8 @@ class ProgressDetailsManager {
                 if (!progress || progress.reps === 0) {
                     statusElement.textContent = 'Not Started';
                     statusElement.classList.add('not-started');
-                } else if (progress.reps >= 5) {
-                    statusElement.textContent = 'Completed';
+                } else if (progress.interval > 30) {
+                    statusElement.textContent = 'Mastered';
                     statusElement.classList.add('completed');
                 } else {
                     statusElement.textContent = 'In Progress';
@@ -1106,21 +1106,20 @@ class UI {
             if (dueReviews.length < 25) {
                 const availableLessons = allTopics
                     .filter(topic => {
-                        // Check if all prerequisites are mastered
+                        // Check if all prerequisites have at least 3 reps
                         const prereqsMet = topic.prerequisites.every(prereqId => {
                             const prereqProgress = progress[prereqId];
                             return prereqProgress && 
+                                   prereqProgress.reps >= 3 &&
                                    prereqProgress.next_review && 
                                    new Date(prereqProgress.next_review) > now;
                         });
 
-                        // Check if this topic isn't already mastered
+                        // Check if this topic has never been started
                         const topicProgress = progress[topic.id];
-                        const notMastered = !topicProgress || 
-                                          !topicProgress.next_review || 
-                                          new Date(topicProgress.next_review) <= now;
+                        const notStarted = !topicProgress || topicProgress.reps === 0;
 
-                        return prereqsMet && notMastered;
+                        return prereqsMet && notStarted;
                     })
                     .slice(0, 25 - dueReviews.length);
 
