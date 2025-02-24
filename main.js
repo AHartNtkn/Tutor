@@ -127,7 +127,8 @@ class ContentLoader {
                     
                     const topic = subjectData.topics.find(t => t.id === topicId);
                     if (topic) {
-                        const response = await fetch(`knowledge_graphs/${graph.id}/${topic.directory}/lesson.json`);
+                        // Load the lesson file directly from the topic's directory
+                        const response = await fetch(`knowledge_graphs/${graph.id}/${topic.directory}.json`);
                         if (!response.ok) throw new Error('Failed to load lesson');
                         return await response.json();
                     }

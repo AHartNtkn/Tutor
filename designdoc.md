@@ -97,14 +97,14 @@ learning_app/
 │   │   |   ├── single_digit_addition.json
 │   │   |   ├── single_digit_addition/
 │   │   |   |   ├── lesson.json
-│   │   |   |   ├── example1.json
-│   │   |   |   ├── example2.json
-│   │   |   |   ├── example3.json
+│   │   |   |   ├── question1.json
+│   │   |   |   ├── question2.json
+│   │   |   |   ├── question3.json
 │   │   |   |   └── ...
 │   |   |   ├── adding_fractions_of_equal_denominators/
 │   │   │   |   ├── lesson.json
-│   │   │   │   |   ├── example1.json
-│   │   |   │   ├── example2.json
+│   │   │   │   |   ├── question1.json
+│   │   |   │   ├── question2.json
 │   │   │   |   └── ...
 │   │   │   └── ...
 │   │   ├── algebra.json          <-- topics & references for algebra
@@ -123,7 +123,7 @@ learning_app/
 2. **Subject Files**: Each file (like `arithmetic.json`) contains a `topics` array with topic metadata and prerequisites. Each topic points to a directory containing its lesson and example content.
 3. **Topic Directories**: Each topic has its own directory (e.g. `arithmetic/single_digit_addition/`) containing:
    - `lesson.json`: Core lesson content and learning objectives
-   - `example1.json`, `example2.json`, etc.: Individual example files with problems and solutions
+   - `question1.json`, `question2.json`, etc.: Individual example files with problems and solutions
 
 #### 3.2.2 Sample Subject File
 ```json
