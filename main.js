@@ -457,7 +457,11 @@ class Student {
         await Database.saveStudent(this);
     }
 
-    updateProgress(topicId, review) {
+    async updateProgress(topicId, review) {
+        // First, load the topic to get its prerequisites
+        const topic = await ContentLoader.loadTopic(topicId);
+        
+        // Initialize or update the main topic's progress
         if (!this.progress[topicId]) {
             this.progress[topicId] = {
                 interval: 1,
@@ -469,35 +473,86 @@ class Student {
             };
         }
 
-        const topic = this.progress[topicId];
+        const topicProgress = this.progress[topicId];
         const now = new Date().toISOString();
 
         // Update based on review grade
         switch (review.grade) {
             case 'again':
-                topic.ease = Math.max(MIN_EASE, topic.ease - 0.20);
-                topic.reps = 0;
-                topic.interval = Math.max(1, Math.floor(topic.interval * 0.5));
+                topicProgress.ease = Math.max(MIN_EASE, topicProgress.ease - 0.20);
+                topicProgress.reps = 0;
+                topicProgress.interval = Math.max(1, Math.floor(topicProgress.interval * 0.5));
                 break;
             case 'hard':
-                topic.ease = Math.max(MIN_EASE, topic.ease - 0.15);
-                topic.reps += 1;
-                topic.interval = Math.floor(topic.interval * 1.2);
+                topicProgress.ease = Math.max(MIN_EASE, topicProgress.ease - 0.15);
+                topicProgress.reps += 1;
+                topicProgress.interval = Math.floor(topicProgress.interval * 1.2);
                 break;
             case 'good':
-                topic.reps += 1;
-                topic.interval = Math.floor(topic.interval * topic.ease);
+                topicProgress.reps += 1;
+                topicProgress.interval = Math.floor(topicProgress.interval * topicProgress.ease);
                 break;
             case 'easy':
-                topic.ease = Math.min(MAX_EASE, topic.ease + 0.15);
-                topic.reps += 1;
-                topic.interval = Math.floor(topic.interval * topic.ease * 1.3);
+                topicProgress.ease = Math.min(MAX_EASE, topicProgress.ease + 0.15);
+                topicProgress.reps += 1;
+                topicProgress.interval = Math.floor(topicProgress.interval * topicProgress.ease * 1.3);
                 break;
         }
 
-        topic.last_review = now;
-        topic.next_review = new Date(Date.now() + topic.interval * 24 * 60 * 60 * 1000).toISOString();
-        topic.last_example = review.example_id;
+        topicProgress.last_review = now;
+        topicProgress.next_review = new Date(Date.now() + topicProgress.interval * 24 * 60 * 60 * 1000).toISOString();
+        topicProgress.last_example = review.example_id;
+
+        // Apply Fractional Implicit Repetition to prerequisites
+        if (topic.prerequisites && topic.prerequisites.length > 0) {
+            for (const prereqId of topic.prerequisites) {
+                // Initialize prerequisite progress if it doesn't exist
+                if (!this.progress[prereqId]) {
+                    this.progress[prereqId] = {
+                        interval: 1,
+                        ease: DEFAULT_EASE,
+                        reps: 0,
+                        last_review: null,
+                        next_review: null,
+                        last_example: null
+                    };
+                }
+
+                const prereqProgress = this.progress[prereqId];
+                const originalInterval = prereqProgress.interval;
+                const originalEase = prereqProgress.ease;
+                const originalReps = prereqProgress.reps;
+
+                // Calculate implicit review based on the main topic's review
+                if (review.grade === 'again' || review.grade === 'hard') {
+                    // If the higher-level topic was difficult, slightly decrease the prerequisite's ease
+                    prereqProgress.ease = Math.max(MIN_EASE, 
+                        (1 - IMPLICIT_FRACTION) * originalEase + 
+                        IMPLICIT_FRACTION * (originalEase - 0.1));
+                    prereqProgress.interval = Math.max(1, 
+                        Math.floor((1 - IMPLICIT_FRACTION) * originalInterval + 
+                        IMPLICIT_FRACTION * (originalInterval * 0.8)));
+                } else {
+                    // If the higher-level topic was handled well, slightly increase the prerequisite's ease
+                    prereqProgress.ease = Math.min(MAX_EASE, 
+                        (1 - IMPLICIT_FRACTION) * originalEase + 
+                        IMPLICIT_FRACTION * (originalEase + 0.1));
+                    prereqProgress.interval = Math.max(1, 
+                        Math.floor((1 - IMPLICIT_FRACTION) * originalInterval + 
+                        IMPLICIT_FRACTION * (originalInterval * prereqProgress.ease)));
+                }
+
+                // Apply fractional rep increase
+                prereqProgress.reps = Math.floor((1 - IMPLICIT_FRACTION) * originalReps + 
+                    IMPLICIT_FRACTION * (originalReps + 1));
+
+                // Update review dates
+                prereqProgress.last_review = now;
+                prereqProgress.next_review = new Date(Date.now() + prereqProgress.interval * 24 * 60 * 60 * 1000).toISOString();
+            }
+        }
+
+        await this.save();
     }
 
     getDueReviews() {
