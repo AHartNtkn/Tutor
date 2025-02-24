@@ -578,6 +578,14 @@ class LessonManager {
             document.querySelector('.content-panel').classList.add('hidden');
             this.view.classList.remove('hidden');
 
+            // Reset lesson state
+            this.view.querySelector('.lesson-complete').classList.add('hidden');
+            this.view.querySelector('.lesson-practice').classList.add('hidden');
+            this.view.querySelector('.example-solution').classList.add('hidden');
+            this.view.querySelector('.example-explanation').classList.add('hidden');
+            this.view.querySelector('.show-solution').classList.remove('hidden');
+            this.view.querySelector('.submit-answer').classList.remove('hidden');
+
             // Populate lesson content
             this.view.querySelector('.lesson-title').textContent = this.currentLesson.title;
             
@@ -677,22 +685,45 @@ class LessonManager {
             options[this.selectedAnswer].classList.add('incorrect');
         }
 
-        // Show next button or complete
+        // Show next button or finish button
         this.view.querySelector('.submit-answer').classList.add('hidden');
-        if (this.currentProblemIndex < this.currentLesson.practice_problems.length - 1) {
-            this.view.querySelector('.next-problem').classList.remove('hidden');
+        const nextButton = this.view.querySelector('.next-problem');
+        
+        // Only change text to "Finish Lesson" if it's the last problem
+        if (this.currentProblemIndex === this.currentLesson.practice_problems.length - 1) {
+            nextButton.textContent = 'Finish Lesson';
         } else {
-            this.completePractice();
+            nextButton.textContent = 'Next Problem';
+        }
+        nextButton.classList.remove('hidden');
+
+        // Refresh MathJax for the explanation
+        if (window.MathJax) {
+            window.MathJax.typesetPromise();
         }
     }
 
     nextProblem() {
-        this.currentProblemIndex++;
-        this.loadProblem(this.currentProblemIndex);
-        this.view.querySelector('.submit-answer').classList.remove('hidden');
+        if (this.currentProblemIndex === this.currentLesson.practice_problems.length - 1) {
+            // If this was the last problem, complete the lesson
+            this.completePractice();
+        } else {
+            // Otherwise, go to next problem
+            this.currentProblemIndex++;
+            this.loadProblem(this.currentProblemIndex);
+            this.view.querySelector('.submit-answer').classList.remove('hidden');
+        }
     }
 
-    completePractice() {
+    async completePractice() {
+        // Update student progress
+        await UI.currentStudent.updateProgress(this.currentLesson.id, {
+            grade: 'good',  // First completion always counts as 'good'
+            example_id: this.currentLesson.practice_problems[this.currentProblemIndex].id
+        });
+        await UI.currentStudent.save();
+
+        // Update UI
         this.view.querySelector('.lesson-practice').classList.add('hidden');
         this.view.querySelector('.lesson-complete').classList.remove('hidden');
         this.view.querySelector('.completion-message').textContent = 
@@ -831,6 +862,11 @@ class ReviewManager {
         // Show grade buttons
         this.view.querySelector('.submit-answer').classList.add('hidden');
         this.view.querySelector('.grade-buttons').classList.remove('hidden');
+
+        // Refresh MathJax for the explanation
+        if (window.MathJax) {
+            window.MathJax.typesetPromise();
+        }
     }
 
     async gradeReview(grade) {
