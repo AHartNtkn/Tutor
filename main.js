@@ -801,6 +801,9 @@ class ReviewManager {
         this.view = document.getElementById('review-view');
         this.consecutiveCorrect = 0;
         this.hadWrongAnswer = false;
+        this.reviewGrades = [];  // Track grades for all problems in the session
+        this.problemCount = 0;  // Track how many problems have been shown
+        this.currentProblemIndex = 0;  // Track position in the problems array
         this.setupEventListeners();
     }
 
@@ -835,11 +838,29 @@ class ReviewManager {
                 topicId,
                 lesson,
                 topic,
-                problems: this.selectReviewProblems(lesson.practice_problems)
+                allProblems: lesson.practice_problems
             };
+
+            // Find starting index based on last example
+            const progress = UI.currentStudent.progress[topicId];
+            const lastExampleId = progress ? progress.last_example : null;
+            
+            if (lastExampleId) {
+                const lastIndex = this.currentReview.allProblems.findIndex(p => p.id === lastExampleId);
+                if (lastIndex !== -1) {
+                    // Start from the next problem, or loop back to beginning
+                    this.currentProblemIndex = (lastIndex + 1) % this.currentReview.allProblems.length;
+                } else {
+                    this.currentProblemIndex = 0;
+                }
+            } else {
+                this.currentProblemIndex = 0;
+            }
 
             this.consecutiveCorrect = 0;
             this.hadWrongAnswer = false;
+            this.reviewGrades = [];
+            this.problemCount = 0;
 
             // Show review view
             document.querySelector('.content-panel').classList.add('hidden');
@@ -849,22 +870,21 @@ class ReviewManager {
             this.view.querySelector('.review-title').textContent = `Review: ${topic.name}`;
 
             // Load first problem
-            this.loadProblem(0);
+            this.loadNextProblem();
         } catch (error) {
             console.error('Failed to start review:', error);
             alert('Failed to load review. Please try again.');
         }
     }
 
-    selectReviewProblems(problems) {
-        // Randomly select 3 problems initially
-        return problems
-            .sort(() => Math.random() - 0.5)
-            .slice(0, 3);
-    }
+    loadNextProblem() {
+        // Get the next problem
+        this.currentProblem = this.currentReview.allProblems[this.currentProblemIndex];
+        this.problemCount++;
+        
+        // Update the index for next time, wrapping around if needed
+        this.currentProblemIndex = (this.currentProblemIndex + 1) % this.currentReview.allProblems.length;
 
-    loadProblem(index) {
-        this.currentProblem = this.currentReview.problems[index];
         const problemText = this.view.querySelector('.problem-text');
         const problemOptions = this.view.querySelector('.problem-options');
         
@@ -933,14 +953,6 @@ class ReviewManager {
         } else {
             this.consecutiveCorrect = 0;
             this.hadWrongAnswer = true;
-            // Add two more problems if we haven't reached the maximum
-            if (this.currentReview.problems.length < 5) {
-                const additionalProblems = this.currentReview.problems
-                    .filter(p => !this.currentReview.problems.includes(p))
-                    .sort(() => Math.random() - 0.5)
-                    .slice(0, 2);
-                this.currentReview.problems.push(...additionalProblems);
-            }
         }
 
         // Hide submit button
@@ -962,51 +974,75 @@ class ReviewManager {
 
         // Refresh MathJax for the explanation
         if (window.MathJax) {
-            window.MathJax.typesetPromise();
-        }
-    }
-
-    async gradeReview(grade) {
-        // Update progress
-        await UI.currentStudent.updateProgress(this.currentReview.topicId, {
-            grade,
-            example_id: this.currentProblem.id
-        });
-        await UI.currentStudent.save();
-
-        // Show next problem or finish
-        this.view.querySelector('.grade-buttons').classList.add('hidden');
-
-        // Check if we should continue or finish
-        const isLastProblem = this.currentProblem === this.currentReview.problems[this.currentReview.problems.length - 1];
-        const hasThreeConsecutiveCorrect = this.consecutiveCorrect >= 3;
-        
-        if (hasThreeConsecutiveCorrect || (isLastProblem && !this.hadWrongAnswer)) {
-            this.view.querySelector('.finish-review').classList.remove('hidden');
-        } else if (isLastProblem && this.hadWrongAnswer) {
-            // Add two more problems if we haven't reached the maximum
-            if (this.currentReview.problems.length < 5) {
-                const additionalProblems = this.currentReview.problems
-                    .filter(p => !this.currentReview.problems.includes(p))
-                    .sort(() => Math.random() - 0.5)
-                    .slice(0, 2);
-                this.currentReview.problems.push(...additionalProblems);
-                this.view.querySelector('.next-review').classList.remove('hidden');
-            } else {
-                this.view.querySelector('.finish-review').classList.remove('hidden');
-            }
-        } else {
-            this.view.querySelector('.next-review').classList.remove('hidden');
+            window.MathJax.typesetPromise && window.MathJax.typesetPromise();
         }
     }
 
     nextReview() {
-        const currentIndex = this.currentReview.problems.indexOf(this.currentProblem);
-        this.loadProblem(currentIndex + 1);
+        this.loadNextProblem();
         this.view.querySelector('.submit-answer').classList.remove('hidden');
     }
 
-    exit() {
+    async gradeReview(grade) {
+        // Store the grade
+        this.reviewGrades.push({
+            grade,
+            example_id: this.currentProblem.id
+        });
+
+        // Hide grade buttons
+        this.view.querySelector('.grade-buttons').classList.add('hidden');
+
+        // Determine if we should continue or finish
+        const hasThreeConsecutiveCorrect = this.consecutiveCorrect >= 3;
+        const hasMinimumProblems = this.problemCount >= 3;
+        const hasMaximumProblems = this.problemCount >= 5;
+        
+        if (hasThreeConsecutiveCorrect && hasMinimumProblems) {
+            // End review if we have 3 consecutive correct and at least 3 problems
+            this.view.querySelector('.finish-review').classList.remove('hidden');
+        } else if (hasMaximumProblems || (hasMinimumProblems && !this.hadWrongAnswer)) {
+            // End review if we've hit max problems or have minimum problems with no wrong answers
+            this.view.querySelector('.finish-review').classList.remove('hidden');
+        } else {
+            // Continue with next problem
+            this.view.querySelector('.next-review').classList.remove('hidden');
+        }
+    }
+
+    async exit() {
+        if (this.reviewGrades.length > 0) {
+            // Calculate the overall grade based on all answers in the session
+            let finalGrade;
+            
+            // If there were any 'again' grades, the final grade is 'again'
+            if (this.reviewGrades.some(item => item.grade === 'again')) {
+                finalGrade = 'again';
+            } 
+            // If more than 50% were 'hard', the final grade is 'hard'
+            else if (this.reviewGrades.filter(item => item.grade === 'hard').length > this.reviewGrades.length / 2) {
+                finalGrade = 'hard';
+            }
+            // If more than 50% were 'easy', the final grade is 'easy'
+            else if (this.reviewGrades.filter(item => item.grade === 'easy').length > this.reviewGrades.length / 2) {
+                finalGrade = 'easy';
+            }
+            // Otherwise, the final grade is 'good'
+            else {
+                finalGrade = 'good';
+            }
+            
+            // Update progress with the final grade and a representative example ID
+            await UI.currentStudent.updateProgress(this.currentReview.topicId, {
+                grade: finalGrade,
+                example_id: this.reviewGrades[0].example_id
+            });
+            await UI.currentStudent.save();
+            
+            // Reset review grades
+            this.reviewGrades = [];
+        }
+        
         this.view.classList.add('hidden');
         document.querySelector('.content-panel').classList.remove('hidden');
         UI.updateUI();
