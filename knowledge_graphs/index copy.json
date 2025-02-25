@@ -1,6 +1,11 @@
 {
     "knowledge_graphs": [
         {
+            "id": "blender",
+            "name": "Blender",
+            "description": "Learn fundamentals of the Blender modeling program"
+        },
+        {
             "id": "mathematics",
             "name": "Mathematics",
             "description": "Learn fundamental mathematical concepts from arithmetic to advanced topics"

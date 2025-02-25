@@ -19,65 +19,81 @@
     },
     "practice_problems": [
         {
-            "id": "numbers_1",
-            "question": "How many stars are shown? ⭐⭐⭐",
-            "options": ["2", "3", "4", "5"],
-            "correct_answer": 1,
-            "explanation": "If we count the stars one by one (⭐:1, ⭐:2, ⭐:3), we can see there are 3 stars."
+            "type": "multi_choice_quiz",
+            "data": {
+                "question": "How many stars are shown? ⭐⭐⭐",
+                "options": ["2", "3", "4", "5"],
+                "correct_answer": 1,
+                "explanation": "If we count the stars one by one (⭐:1, ⭐:2, ⭐:3), we can see there are 3 stars."
+            }
         },
         {
-            "id": "numbers_2",
-            "question": "Which number is greater: 7 or 4?",
-            "options": ["4 is greater", "7 is greater", "They are equal", "Cannot be compared"],
-            "correct_answer": 1,
-            "explanation": "7 is greater than 4 because 7 represents more objects than 4. If you count to 7, you pass 4 on the way."
+            "type": "multi_choice_quiz",
+            "data": {
+                "question": "Which number is greater: 7 or 4?",
+                "options": ["4 is greater", "7 is greater", "They are equal", "Cannot be compared"],
+                "correct_answer": 1,
+                "explanation": "7 is greater than 4 because 7 represents more objects than 4. If you count to 7, you pass 4 on the way."
+            }
         },
         {
-            "id": "numbers_3",
-            "question": "What number comes after 5?",
-            "options": ["4", "5", "6", "7"],
-            "correct_answer": 2,
-            "explanation": "When counting up, the number after 5 is 6. The sequence goes: 4, 5, 6, 7."
+            "type": "multi_choice_quiz",
+            "data": {
+                "question": "What number comes after 5?",
+                "options": ["4", "5", "6", "7"],
+                "correct_answer": 2,
+                "explanation": "When counting up, the number after 5 is 6. The sequence goes: 4, 5, 6, 7."
+            }
         },
         {
-            "id": "numbers_4",
-            "question": "How many circles are there? ⭕⭕⭕⭕⭕",
-            "options": ["3", "4", "5", "6"],
-            "correct_answer": 2,
-            "explanation": "Counting the circles one by one (⭕:1, ⭕:2, ⭕:3, ⭕:4, ⭕:5), we can see there are 5 circles."
+            "type": "multi_choice_quiz",
+            "data": {
+                "question": "How many circles are there? ⭕⭕⭕⭕⭕",
+                "options": ["3", "4", "5", "6"],
+                "correct_answer": 2,
+                "explanation": "Counting the circles one by one (⭕:1, ⭕:2, ⭕:3, ⭕:4, ⭕:5), we can see there are 5 circles."
+            }
         },
         {
-            "id": "numbers_5",
-            "question": "What number is between 2 and 4?",
-            "options": ["1", "2", "3", "4"],
-            "correct_answer": 2,
-            "explanation": "When counting up: 1, 2, 3, 4, 5... we can see that 3 comes between 2 and 4."
+            "type": "multi_choice_quiz",
+            "data": {
+                "question": "What number is between 2 and 4?",
+                "options": ["1", "2", "3", "4"],
+                "correct_answer": 2,
+                "explanation": "When counting up: 1, 2, 3, 4, 5... we can see that 3 comes between 2 and 4."
+            }
         },
         {
-            "id": "numbers_6",
-            "question": "Which group has more? 🌟🌟 or 🌟🌟🌟",
-            "options": [
-                "First group (2 stars)",
-                "Second group (3 stars)",
-                "They have the same amount",
-                "Cannot be determined"
-            ],
-            "correct_answer": 1,
-            "explanation": "The first group has 2 stars, the second group has 3 stars. 3 is greater than 2, so the second group has more stars."
+            "type": "multi_choice_quiz",
+            "data": {
+                "question": "Which group has more? 🌟🌟 or 🌟🌟🌟",
+                "options": [
+                    "First group (2 stars)",
+                    "Second group (3 stars)",
+                    "They have the same amount",
+                    "Cannot be determined"
+                ],
+                "correct_answer": 1,
+                "explanation": "The first group has 2 stars, the second group has 3 stars. 3 is greater than 2, so the second group has more stars."
+            }
         },
         {
-            "id": "numbers_7",
-            "question": "What number represents 'nothing'?",
-            "options": ["1", "0", "10", "2"],
-            "correct_answer": 1,
-            "explanation": "0 (zero) represents 'nothing' or 'none'. It shows that there are no objects to count."
+            "type": "multi_choice_quiz",
+            "data": {
+                "question": "What number represents 'nothing'?",
+                "options": ["1", "0", "10", "2"],
+                "correct_answer": 1,
+                "explanation": "0 (zero) represents 'nothing' or 'none'. It shows that there are no objects to count."
+            }
         },
         {
-            "id": "numbers_8",
-            "question": "Count the hearts: ❤️❤️❤️❤️. What number comes next if we added one more?",
-            "options": ["3", "4", "5", "6"],
-            "correct_answer": 2,
-            "explanation": "There are 4 hearts. If we added one more, it would be 5 hearts. When counting up: 1, 2, 3, 4, 5."
+            "type": "multi_choice_quiz",
+            "data": {
+                "question": "Count the hearts: ❤️❤️❤️❤️. What number comes next if we added one more?",
+                "options": ["3", "4", "5", "6"],
+                "correct_answer": 2,
+                "explanation": "There are 4 hearts. If we added one more, it would be 5 hearts. When counting up: 1, 2, 3, 4, 5."
+            }
         }
     ]
 } 

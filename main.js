@@ -598,12 +598,22 @@ class Student {
     }
 }
 
+// Add this function to handle iframe resizing
+function setupIframeResizing(iframe) {
+    // Listen for messages from the iframe
+    window.addEventListener('message', function(e) {
+        if (e.data && e.data.type === 'resize') {
+            // Add a small buffer to prevent scrollbar from appearing
+            iframe.style.height = (e.data.height + 20) + 'px';
+        }
+    });
+}
+
 // Lesson Manager
 class LessonManager {
     constructor() {
         this.currentLesson = null;
         this.currentProblemIndex = 0;
-        this.selectedAnswer = null;
         this.view = document.getElementById('lesson-view');
         this.setupEventListeners();
     }
@@ -611,23 +621,14 @@ class LessonManager {
     setupEventListeners() {
         this.view.querySelector('.back-button').addEventListener('click', () => this.exit());
         this.view.querySelector('.show-solution').addEventListener('click', () => this.showSolution());
-        this.view.querySelector('.submit-answer').addEventListener('click', () => this.submitAnswer());
         this.view.querySelector('.next-problem').addEventListener('click', () => this.nextProblem());
         this.view.querySelector('.return-home').addEventListener('click', () => this.exit());
-
-        // Delegate click events for option buttons
-        this.view.querySelector('.problem-options').addEventListener('click', (e) => {
-            if (e.target.classList.contains('option-button')) {
-                this.selectAnswer(e.target);
-            }
-        });
     }
 
     async start(topicId) {
         try {
             this.currentLesson = await ContentLoader.loadLesson(topicId);
             this.currentProblemIndex = 0;
-            this.selectedAnswer = null;
 
             // Show lesson view
             document.querySelector('.content-panel').classList.add('hidden');
@@ -639,7 +640,6 @@ class LessonManager {
             this.view.querySelector('.example-solution').classList.add('hidden');
             this.view.querySelector('.example-explanation').classList.add('hidden');
             this.view.querySelector('.show-solution').classList.remove('hidden');
-            this.view.querySelector('.submit-answer').classList.remove('hidden');
 
             // Populate lesson content
             this.view.querySelector('.lesson-title').textContent = this.currentLesson.title;
@@ -663,10 +663,11 @@ class LessonManager {
             exampleSolution.innerHTML = this.currentLesson.worked_example.solution;
             exampleExplanation.innerHTML = this.currentLesson.worked_example.explanation;
 
-            // Refresh MathJax
-            if (window.MathJax) {
-                window.MathJax.typesetPromise();
+            // Refresh MathJax if needed
+            if (window.MathJax && this.currentLesson.explanation.mathJax) {
+                window.MathJax.typesetPromise && window.MathJax.typesetPromise();
             }
+
         } catch (error) {
             console.error('Failed to start lesson:', error);
             alert('Failed to load lesson. Please try again.');
@@ -684,77 +685,63 @@ class LessonManager {
     }
 
     loadProblem(index) {
+        this.currentProblemIndex = index;
         const problem = this.currentLesson.practice_problems[index];
-        const problemText = this.view.querySelector('.problem-text');
-        const problemOptions = this.view.querySelector('.problem-options');
-        const problemCounter = this.view.querySelector('.problem-counter');
-        
-        problemText.innerHTML = problem.question;
-        problemOptions.innerHTML = problem.options
-            .map((option, i) => `
-                <button class="option-button" data-index="${i}">
-                    ${option}
-                </button>
-            `)
-            .join('');
+        const practiceSection = this.view.querySelector('.lesson-practice');
+        const problemCounter = practiceSection.querySelector('.problem-counter');
+        const nextButton = practiceSection.querySelector('.next-problem');
 
+        // Update problem counter
         problemCounter.textContent = `Problem ${index + 1}/${this.currentLesson.practice_problems.length}`;
-        
-        this.view.querySelector('.submit-answer').disabled = true;
-        this.view.querySelector('.problem-feedback').classList.add('hidden');
-        this.view.querySelector('.next-problem').classList.add('hidden');
-        this.selectedAnswer = null;
 
-        if (window.MathJax) {
-            window.MathJax.typesetPromise();
-        }
+        // Reset buttons
+        nextButton.classList.add('hidden');
+
+        // Clear any previous app
+        const interactableContainer = practiceSection.querySelector('.interactable-container');
+        interactableContainer.innerHTML = '';
+        interactableContainer.classList.remove('hidden');
+
+        // Create iframe for the app
+        this.currentApp = document.createElement('iframe');
+        this.currentApp.src = `knowledge_graphs/mathematics/apps/${problem.type}.html`;
+        this.currentApp.style.width = '100%';
+        this.currentApp.style.height = '400px';
+        this.currentApp.style.border = 'none';
+        setupIframeResizing(this.currentApp);
+        interactableContainer.appendChild(this.currentApp);
+
+        // Set up message handler for this specific iframe
+        const messageHandler = (event) => {
+            if (event.source !== this.currentApp.contentWindow) return;
+
+            switch (event.data.type) {
+                case 'ready':
+                    // Initialize the app with the problem data
+                    this.currentApp.contentWindow.postMessage({
+                        type: 'initialize',
+                        data: problem.data
+                    }, '*');
+                    break;
+                case 'answerSubmitted':
+                    this.handleInteractableResult(event.data.isCorrect, problem);
+                    break;
+            }
+        };
+
+        window.addEventListener('message', messageHandler);
+        this.currentApp.messageHandler = messageHandler;
     }
-
-    selectAnswer(optionButton) {
-        // Remove selection from all options
-        this.view.querySelectorAll('.option-button').forEach(btn => {
-            btn.classList.remove('selected');
-        });
-
-        // Select the clicked option
-        optionButton.classList.add('selected');
-        this.selectedAnswer = parseInt(optionButton.dataset.index);
-        this.view.querySelector('.submit-answer').disabled = false;
-    }
-
-    submitAnswer() {
-        const problem = this.currentLesson.practice_problems[this.currentProblemIndex];
-        const isCorrect = this.selectedAnswer === problem.correct_answer;
-        const feedback = this.view.querySelector('.problem-feedback');
-        
-        // Show feedback
-        feedback.innerHTML = problem.explanation;
-        feedback.classList.remove('hidden');
-        feedback.classList.toggle('correct', isCorrect);
-        feedback.classList.toggle('incorrect', !isCorrect);
-
-        // Style the options
-        const options = this.view.querySelectorAll('.option-button');
-        options[problem.correct_answer].classList.add('correct');
-        if (!isCorrect) {
-            options[this.selectedAnswer].classList.add('incorrect');
-        }
-
+    
+    handleInteractableResult(isCorrect, problem) {
         // Show next button or finish button
-        this.view.querySelector('.submit-answer').classList.add('hidden');
         const nextButton = this.view.querySelector('.next-problem');
+        nextButton.classList.remove('hidden');
         
-        // Only change text to "Finish Lesson" if it's the last problem
         if (this.currentProblemIndex === this.currentLesson.practice_problems.length - 1) {
             nextButton.textContent = 'Finish Lesson';
         } else {
             nextButton.textContent = 'Next Problem';
-        }
-        nextButton.classList.remove('hidden');
-
-        // Refresh MathJax for the explanation
-        if (window.MathJax) {
-            window.MathJax.typesetPromise();
         }
     }
 
@@ -764,9 +751,7 @@ class LessonManager {
             this.completePractice();
         } else {
             // Otherwise, go to next problem
-            this.currentProblemIndex++;
-            this.loadProblem(this.currentProblemIndex);
-            this.view.querySelector('.submit-answer').classList.remove('hidden');
+            this.loadProblem(this.currentProblemIndex + 1);
         }
     }
 
@@ -776,7 +761,6 @@ class LessonManager {
             grade: 'good',  // First completion always counts as 'good'
             example_id: this.currentLesson.practice_problems[this.currentProblemIndex].id
         });
-        await UI.currentStudent.save();
 
         // Update UI
         this.view.querySelector('.lesson-practice').classList.add('hidden');
@@ -786,6 +770,11 @@ class LessonManager {
     }
 
     exit() {
+        // Clean up any existing app
+        if (this.currentApp && this.currentApp.messageHandler) {
+            window.removeEventListener('message', this.currentApp.messageHandler);
+        }
+        
         this.view.classList.add('hidden');
         document.querySelector('.content-panel').classList.remove('hidden');
         UI.updateUI();
@@ -799,8 +788,6 @@ class ReviewManager {
         this.currentProblem = null;
         this.selectedAnswer = null;
         this.view = document.getElementById('review-view');
-        this.consecutiveCorrect = 0;
-        this.hadWrongAnswer = false;
         this.reviewGrades = [];  // Track grades for all problems in the session
         this.problemCount = 0;  // Track how many problems have been shown
         this.currentProblemIndex = 0;  // Track position in the problems array
@@ -809,7 +796,6 @@ class ReviewManager {
 
     setupEventListeners() {
         this.view.querySelector('.back-button').addEventListener('click', () => this.exit());
-        this.view.querySelector('.submit-answer').addEventListener('click', () => this.submitAnswer());
         this.view.querySelector('.next-review').addEventListener('click', () => this.nextReview());
         this.view.querySelector('.finish-review').addEventListener('click', () => this.exit());
 
@@ -819,13 +805,6 @@ class ReviewManager {
             if (e.target.classList.contains('grade-hard')) this.gradeReview('hard');
             if (e.target.classList.contains('grade-good')) this.gradeReview('good');
             if (e.target.classList.contains('grade-easy')) this.gradeReview('easy');
-        });
-
-        // Problem options
-        this.view.querySelector('.problem-options').addEventListener('click', (e) => {
-            if (e.target.classList.contains('option-button')) {
-                this.selectAnswer(e.target);
-            }
         });
     }
 
@@ -857,9 +836,6 @@ class ReviewManager {
                 this.currentProblemIndex = 0;
             }
 
-            this.consecutiveCorrect = 0;
-            this.hadWrongAnswer = false;
-            this.reviewGrades = [];
             this.problemCount = 0;
 
             // Show review view
@@ -878,109 +854,94 @@ class ReviewManager {
     }
 
     loadNextProblem() {
-        // Get the next problem
-        this.currentProblem = this.currentReview.allProblems[this.currentProblemIndex];
-        this.problemCount++;
-        
-        // Update the index for next time, wrapping around if needed
-        this.currentProblemIndex = (this.currentProblemIndex + 1) % this.currentReview.allProblems.length;
+        const problem = this.currentReview.allProblems[this.currentProblemIndex];
+        this.currentProblem = problem; // Store current problem reference
+        const reviewContent = this.view.querySelector('.review-content');
+        const nextButton = reviewContent.querySelector('.next-review');
+        const finishButton = reviewContent.querySelector('.finish-review');
+        const gradeButtons = reviewContent.querySelector('.grade-buttons');
 
-        const problemText = this.view.querySelector('.problem-text');
-        const problemOptions = this.view.querySelector('.problem-options');
-        
-        problemText.innerHTML = this.currentProblem.question;
-        problemOptions.innerHTML = this.currentProblem.options
-            .map((option, i) => `
-                <button class="option-button" data-index="${i}">
-                    ${option}
-                </button>
-            `)
-            .join('');
+        // Reset buttons
+        nextButton.classList.add('hidden');
+        finishButton.classList.add('hidden');
+        gradeButtons.classList.add('hidden');
 
-        // Reset all UI elements
-        const submitButton = this.view.querySelector('.submit-answer');
-        submitButton.disabled = true;
-        submitButton.classList.remove('hidden');
-
-        this.view.querySelector('.problem-feedback').classList.add('hidden');
-        this.view.querySelector('.grade-buttons').classList.add('hidden');
-        this.view.querySelector('.next-review').classList.add('hidden');
-        this.view.querySelector('.finish-review').classList.add('hidden');
-        
-        // Clear any previous answer selections and feedback
-        this.selectedAnswer = null;
-        this.view.querySelectorAll('.option-button').forEach(btn => {
-            btn.classList.remove('selected', 'correct', 'incorrect');
-        });
-
-        if (window.MathJax) {
-            window.MathJax.typesetPromise();
-        }
-    }
-
-    selectAnswer(optionButton) {
-        // Remove selection from all options
-        this.view.querySelectorAll('.option-button').forEach(btn => {
-            btn.classList.remove('selected');
-        });
-
-        // Select the clicked option
-        optionButton.classList.add('selected');
-        this.selectedAnswer = parseInt(optionButton.dataset.index);
-        this.view.querySelector('.submit-answer').disabled = false;
-    }
-
-    submitAnswer() {
-        const isCorrect = this.selectedAnswer === this.currentProblem.correct_answer;
-        const feedback = this.view.querySelector('.problem-feedback');
-        
-        // Show feedback
-        feedback.innerHTML = this.currentProblem.explanation;
-        feedback.classList.remove('hidden');
-        feedback.classList.toggle('correct', isCorrect);
-        feedback.classList.toggle('incorrect', !isCorrect);
-
-        // Style the options
-        const options = this.view.querySelectorAll('.option-button');
-        options[this.currentProblem.correct_answer].classList.add('correct');
-        if (!isCorrect) {
-            options[this.selectedAnswer].classList.add('incorrect');
-        }
-
-        // Update tracking variables
-        if (isCorrect) {
-            this.consecutiveCorrect++;
-        } else {
-            this.consecutiveCorrect = 0;
-            this.hadWrongAnswer = true;
-        }
-
-        // Hide submit button
-        this.view.querySelector('.submit-answer').classList.add('hidden');
-
-        // If the answer was wrong, automatically treat it as 'again' and show next/finish button
-        if (!isCorrect) {
-            this.gradeReview('again');
-        } else {
-            // Show grade buttons for correct answers
-            const gradeButtons = this.view.querySelector('.grade-buttons');
-            gradeButtons.classList.remove('hidden');
-            // Remove the 'again' button from the UI
-            const againButton = gradeButtons.querySelector('.grade-again');
-            if (againButton) {
-                againButton.remove();
+        // Clear any previous app
+        if (this.currentApp) {
+            if (this.currentApp.messageHandler) {
+                window.removeEventListener('message', this.currentApp.messageHandler);
             }
+            this.currentApp.remove();
+            this.currentApp = null;
         }
 
-        // Refresh MathJax for the explanation
-        if (window.MathJax) {
-            window.MathJax.typesetPromise && window.MathJax.typesetPromise();
+        // Create iframe for the interactable app
+        const problemContainer = reviewContent.querySelector('.review-problem');
+        problemContainer.innerHTML = '';
+        
+        this.currentApp = document.createElement('iframe');
+        this.currentApp.src = `knowledge_graphs/mathematics/apps/${problem.type}.html`;
+        this.currentApp.style.width = '100%';
+        this.currentApp.style.height = '400px';
+        this.currentApp.style.border = 'none';
+        setupIframeResizing(this.currentApp);
+        problemContainer.appendChild(this.currentApp);
+
+        // Set up message handler for this specific iframe
+        const messageHandler = (event) => {
+            if (event.source !== this.currentApp.contentWindow) return;
+
+            switch (event.data.type) {
+                case 'ready':
+                    this.currentApp.contentWindow.postMessage({
+                        type: 'initialize',
+                        data: problem.data
+                    }, '*');
+                    break;
+                case 'answerSubmitted':
+                    this.handleInteractableResult(event.data.isCorrect);
+                    break;
+            }
+        };
+
+        window.addEventListener('message', messageHandler);
+        this.currentApp.messageHandler = messageHandler;
+    }
+    
+    // Handle results from interactable apps
+    handleInteractableResult(isCorrect) {
+        if (isCorrect) {
+            // Show grade buttons for correct answers
+            this.view.querySelector('.grade-buttons').classList.remove('hidden');
+        } else {
+            // For incorrect answers, show a red "Next Problem" button and record as 'again' grade
+            this.reviewGrades.push({
+                grade: 'again',
+                example_id: this.currentProblem.id
+            });
+            this.problemCount++;
+
+            // Check if we should end the review
+            const hadIncorrectAnswer = true; // We know there's at least one incorrect answer (this one)
+            const requiredProblems = 5; // With incorrect answers, we always need 5 problems
+
+            if (this.problemCount >= requiredProblems) {
+                // End review if we've shown enough problems
+                this.view.querySelector('.next-review').classList.add('hidden');
+                this.view.querySelector('.finish-review').classList.remove('hidden');
+            } else {
+                // Show the red "Next Problem" button
+                const nextButton = this.view.querySelector('.next-review');
+                nextButton.classList.add('error');
+                nextButton.classList.remove('hidden');
+            }
         }
     }
 
     nextReview() {
+        // Move to the next problem in the sequence
+        this.currentProblemIndex = (this.currentProblemIndex + 1) % this.currentReview.allProblems.length;
         this.loadNextProblem();
-        this.view.querySelector('.submit-answer').classList.remove('hidden');
     }
 
     async gradeReview(grade) {
@@ -989,24 +950,26 @@ class ReviewManager {
             grade,
             example_id: this.currentProblem.id
         });
+        this.problemCount++;
 
         // Hide grade buttons
         this.view.querySelector('.grade-buttons').classList.add('hidden');
 
+        // Reset next button styling (in case it was red from a previous wrong answer)
+        const nextButton = this.view.querySelector('.next-review');
+        nextButton.classList.remove('error');
+
         // Determine if we should continue or finish
-        const hasThreeConsecutiveCorrect = this.consecutiveCorrect >= 3;
-        const hasMinimumProblems = this.problemCount >= 3;
-        const hasMaximumProblems = this.problemCount >= 5;
+        const hadIncorrectAnswer = this.reviewGrades.some(review => review.grade === 'again');
+        const requiredProblems = hadIncorrectAnswer ? 5 : 3;
         
-        if (hasThreeConsecutiveCorrect && hasMinimumProblems) {
-            // End review if we have 3 consecutive correct and at least 3 problems
-            this.view.querySelector('.finish-review').classList.remove('hidden');
-        } else if (hasMaximumProblems || (hasMinimumProblems && !this.hadWrongAnswer)) {
-            // End review if we've hit max problems or have minimum problems with no wrong answers
+        if (this.problemCount >= requiredProblems) {
+            // End review if we've shown enough problems
+            this.view.querySelector('.next-review').classList.add('hidden');
             this.view.querySelector('.finish-review').classList.remove('hidden');
         } else {
             // Continue with next problem
-            this.view.querySelector('.next-review').classList.remove('hidden');
+            this.nextReview();
         }
     }
 
