@@ -1,0 +1,116 @@
+{
+    "id": "arithmetic_basic_fractions",
+    "title": "Basic Fractions",
+    "objectives": [
+        "Understand what a fraction represents",
+        "Identify the numerator and denominator",
+        "Recognize fractions in visual representations"
+    ],
+    "explanation": {
+        "content": "A fraction represents a part of a whole. It consists of two numbers:\n\n1. The numerator (top number): shows how many parts we have\n2. The denominator (bottom number): shows how many equal parts the whole is divided into\n\nFor example, in the fraction \\(\\frac{3}{4}\\):\n- The numerator is 3 (we have 3 parts)\n- The denominator is 4 (the whole is divided into 4 equal parts)",
+        "mathJax": true
+    },
+    "worked_example": {
+        "problem": "Look at this circle divided into 8 equal parts, with 5 parts shaded. What fraction represents the shaded portion?",
+        "solution": "\\(\\frac{5}{8}\\)",
+        "explanation": "1. Count the total number of equal parts: 8 (this is our denominator)\n2. Count the shaded parts: 5 (this is our numerator)\n3. Therefore, the fraction is \\(\\frac{5}{8}\\)",
+        "mathJax": true
+    },
+    "practice_problems": [
+        {
+            "id": "basic_fractions_1",
+            "question": "In a pizza cut into 6 equal slices, if 4 slices are eaten, what fraction represents the eaten portion?",
+            "options": [
+                "\\(\\frac{4}{6}\\)",
+                "\\(\\frac{6}{4}\\)",
+                "\\(\\frac{2}{6}\\)",
+                "\\(\\frac{4}{2}\\)"
+            ],
+            "correct_answer": 0,
+            "explanation": "There are 6 total slices (denominator), and 4 were eaten (numerator), so the fraction is \\(\\frac{4}{6}\\)",
+            "mathJax": true
+        },
+        {
+            "id": "basic_fractions_2",
+            "question": "What fraction of this rectangle is shaded?",
+            "image": "rectangle_3_4.svg",
+            "options": [
+                "\\(\\frac{1}{4}\\)",
+                "\\(\\frac{3}{4}\\)",
+                "\\(\\frac{4}{3}\\)",
+                "\\(\\frac{1}{3}\\)"
+            ],
+            "correct_answer": 1,
+            "explanation": "The rectangle is divided into 4 equal parts (denominator), with 3 parts shaded (numerator), making it \\(\\frac{3}{4}\\)",
+            "mathJax": true
+        },
+        {
+            "id": "basic_fractions_3",
+            "question": "In the fraction \\(\\frac{2}{5}\\), what is the denominator?",
+            "options": ["2", "5", "\\(\\frac{2}{5}\\)", "7"],
+            "correct_answer": 1,
+            "explanation": "In a fraction \\(\\frac{a}{b}\\), the denominator is the bottom number (b). In \\(\\frac{2}{5}\\), the denominator is 5.",
+            "mathJax": true
+        },
+        {
+            "id": "basic_fractions_4",
+            "question": "Which fraction represents exactly half?",
+            "options": [
+                "\\(\\frac{1}{2}\\)",
+                "\\(\\frac{2}{1}\\)",
+                "\\(\\frac{2}{4}\\)",
+                "\\(\\frac{1}{3}\\)"
+            ],
+            "correct_answer": 0,
+            "explanation": "\\(\\frac{1}{2}\\) means 1 out of 2 equal parts, which is exactly half.",
+            "mathJax": true
+        },
+        {
+            "id": "basic_fractions_5",
+            "question": "If a chocolate bar is divided into 3 equal pieces and you eat 2 pieces, what fraction of the chocolate bar did you eat?",
+            "options": [
+                "\\(\\frac{3}{2}\\)",
+                "\\(\\frac{1}{3}\\)",
+                "\\(\\frac{2}{3}\\)",
+                "\\(\\frac{2}{1}\\)"
+            ],
+            "correct_answer": 2,
+            "explanation": "The bar is divided into 3 pieces (denominator), and you ate 2 pieces (numerator), so you ate \\(\\frac{2}{3}\\) of the bar.",
+            "mathJax": true
+        },
+        {
+            "id": "basic_fractions_6",
+            "question": "In the fraction \\(\\frac{7}{8}\\), what is the numerator?",
+            "options": ["7", "8", "\\(\\frac{7}{8}\\)", "15"],
+            "correct_answer": 0,
+            "explanation": "In a fraction \\(\\frac{a}{b}\\), the numerator is the top number (a). In \\(\\frac{7}{8}\\), the numerator is 7.",
+            "mathJax": true
+        },
+        {
+            "id": "basic_fractions_7",
+            "question": "A jar has 6 marbles, and 3 are red. What fraction of the marbles are red?",
+            "options": [
+                "\\(\\frac{6}{3}\\)",
+                "\\(\\frac{3}{6}\\)",
+                "\\(\\frac{3}{3}\\)",
+                "\\(\\frac{6}{6}\\)"
+            ],
+            "correct_answer": 1,
+            "explanation": "There are 6 total marbles (denominator), and 3 are red (numerator), so the fraction is \\(\\frac{3}{6}\\).",
+            "mathJax": true
+        },
+        {
+            "id": "basic_fractions_8",
+            "question": "Which of these represents three-quarters?",
+            "options": [
+                "\\(\\frac{4}{3}\\)",
+                "\\(\\frac{1}{4}\\)",
+                "\\(\\frac{3}{4}\\)",
+                "\\(\\frac{4}{4}\\)"
+            ],
+            "correct_answer": 2,
+            "explanation": "Three-quarters means 3 out of 4 equal parts, which is written as \\(\\frac{3}{4}\\).",
+            "mathJax": true
+        }
+    ]
+} 

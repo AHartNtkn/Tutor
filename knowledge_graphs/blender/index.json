@@ -1,0 +1,3 @@
+{
+    "subjects": ["fundamentals.json", "scenes.json", "viewport.json", "interface.json", "outliner.json", "properties_editor.json", "timeline.json", "info_editor.json", "text_editor.json", "python_console.json"]
+} 

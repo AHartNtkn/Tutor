@@ -108,27 +108,27 @@ class ContentLoader {
     static async loadLesson(topicId) {
         try {
             // First find which knowledge graph contains this topic
-            const indexResponse = await fetch('knowledge_graphs/index.json');
+            const indexResponse = await fetch(`knowledge_graphs/index.json?t=${Date.now()}`);
             if (!indexResponse.ok) throw new Error('Failed to load index');
             const indexData = await indexResponse.json();
             
             // Search through each knowledge graph
             for (const graph of indexData.knowledge_graphs) {
                 // Load the graph's index
-                const graphIndexResponse = await fetch(`knowledge_graphs/${graph.id}/index.json`);
+                const graphIndexResponse = await fetch(`knowledge_graphs/${graph.id}/index.json?t=${Date.now()}`);
                 if (!graphIndexResponse.ok) continue;
                 const graphIndexData = await graphIndexResponse.json();
                 
                 // Search through each subject in the graph
                 for (const subject of graphIndexData.subjects) {
-                    const subjectResponse = await fetch(`knowledge_graphs/${graph.id}/${subject}`);
+                    const subjectResponse = await fetch(`knowledge_graphs/${graph.id}/${subject}?t=${Date.now()}`);
                     if (!subjectResponse.ok) continue;
                     const subjectData = await subjectResponse.json();
                     
                     const topic = subjectData.topics.find(t => t.id === topicId);
                     if (topic) {
                         // Load the lesson file directly from the topic's directory
-                        const response = await fetch(`knowledge_graphs/${graph.id}/${topic.directory}.json`);
+                        const response = await fetch(`knowledge_graphs/${graph.id}/${topic.directory}.json?t=${Date.now()}`);
                         if (!response.ok) throw new Error('Failed to load lesson');
                         return await response.json();
                     }
@@ -144,20 +144,20 @@ class ContentLoader {
     static async loadTopic(topicId) {
         try {
             // First find which knowledge graph contains this topic
-            const indexResponse = await fetch('knowledge_graphs/index.json');
+            const indexResponse = await fetch(`knowledge_graphs/index.json?t=${Date.now()}`);
             if (!indexResponse.ok) throw new Error('Failed to load index');
             const indexData = await indexResponse.json();
             
             // Search through each knowledge graph
             for (const graph of indexData.knowledge_graphs) {
                 // Load the graph's index
-                const graphIndexResponse = await fetch(`knowledge_graphs/${graph.id}/index.json`);
+                const graphIndexResponse = await fetch(`knowledge_graphs/${graph.id}/index.json?t=${Date.now()}`);
                 if (!graphIndexResponse.ok) continue;
                 const graphIndexData = await graphIndexResponse.json();
                 
                 // Search through each subject in the graph
                 for (const subject of graphIndexData.subjects) {
-                    const subjectResponse = await fetch(`knowledge_graphs/${graph.id}/${subject}`);
+                    const subjectResponse = await fetch(`knowledge_graphs/${graph.id}/${subject}?t=${Date.now()}`);
                     if (!subjectResponse.ok) continue;
                     const subjectData = await subjectResponse.json();
                     
@@ -215,7 +215,7 @@ class ProgressDetailsManager {
     async start(knowledgeGraphId) {
         try {
             // First load the graph's index
-            const indexResponse = await fetch(`knowledge_graphs/${knowledgeGraphId}/index.json`);
+            const indexResponse = await fetch(`knowledge_graphs/${knowledgeGraphId}/index.json?t=${Date.now()}`);
             if (!indexResponse.ok) throw new Error('Failed to load graph index');
             const indexData = await indexResponse.json();
             
@@ -240,14 +240,14 @@ class ProgressDetailsManager {
         this.viewTitle.textContent = `${this.currentKnowledgeGraph.charAt(0).toUpperCase() + this.currentKnowledgeGraph.slice(1)} Progress`;
         
         try {
-            const indexResponse = await fetch(`knowledge_graphs/${this.currentKnowledgeGraph}/index.json`);
+            const indexResponse = await fetch(`knowledge_graphs/${this.currentKnowledgeGraph}/index.json?t=${Date.now()}`);
             if (!indexResponse.ok) throw new Error('Failed to load graph index');
             const indexData = await indexResponse.json();
             
             // Load all subjects
             const subjects = [];
             for (const subject of indexData.subjects) {
-                const subjectResponse = await fetch(`knowledge_graphs/${this.currentKnowledgeGraph}/${subject}`);
+                const subjectResponse = await fetch(`knowledge_graphs/${this.currentKnowledgeGraph}/${subject}?t=${Date.now()}`);
                 if (!subjectResponse.ok) continue;
                 const subjectData = await subjectResponse.json();
                 subjects.push({
@@ -266,7 +266,7 @@ class ProgressDetailsManager {
 
     async showLessonsForSubject(subjectId) {
         try {
-            const response = await fetch(`knowledge_graphs/${this.currentKnowledgeGraph}/${subjectId}.json`);
+            const response = await fetch(`knowledge_graphs/${this.currentKnowledgeGraph}/${subjectId}.json?t=${Date.now()}`);
             if (!response.ok) throw new Error('Failed to load subject');
             const data = await response.json();
             
@@ -1137,14 +1137,32 @@ class UI {
         container.innerHTML = '';
 
         try {
-            const response = await fetch('knowledge_graphs/index.json');
+            console.log('Fetching knowledge graphs from index.json...');
+            // Add cache-busting timestamp
+            const response = await fetch(`knowledge_graphs/index.json?t=${Date.now()}`);
+            console.log('Response status:', response.status);
+            
+            // Log the raw response text
+            const responseText = await response.clone().text();
+            console.log('Raw response text:', responseText);
+            
             if (!response.ok) throw new Error('Failed to load knowledge graphs');
             const data = await response.json();
+            console.log('Parsed knowledge graphs data:', JSON.stringify(data, null, 2));
+            console.log('Number of knowledge graphs:', data.knowledge_graphs ? data.knowledge_graphs.length : 0);
+            
+            if (!data.knowledge_graphs) {
+                console.error('No knowledge_graphs array in response');
+                throw new Error('Invalid knowledge graphs data format');
+            }
 
             const template = document.getElementById('card-template');
+            console.log('Found template:', template !== null);
 
             // Add a card for each knowledge graph
+            console.log('Processing knowledge graphs:', data.knowledge_graphs.length, 'graphs found');
             for (const graph of data.knowledge_graphs) {
+                console.log('Processing graph:', JSON.stringify(graph, null, 2));
                 const clone = template.content.cloneNode(true);
                 const card = clone.querySelector('.card');
                 
@@ -1157,6 +1175,7 @@ class UI {
                 clone.querySelector('.card-due').textContent = 'Click to explore';
                 
                 container.appendChild(clone);
+                console.log('Added card for:', graph.name);
             }
 
             // Hide progress button on main selection screen
@@ -1165,6 +1184,11 @@ class UI {
 
         } catch (error) {
             console.error('Failed to load knowledge graphs:', error);
+            console.error('Error details:', {
+                name: error.name,
+                message: error.message,
+                stack: error.stack
+            });
             container.innerHTML = '<p class="error">Failed to load knowledge graphs. Please refresh the page.</p>';
         }
     }

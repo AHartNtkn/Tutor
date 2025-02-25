@@ -1,0 +1,695 @@
+Here is a list of core ideas that I want to turn into short lessons
+
+Topic: 3D Viewport Navigation
+
+Orbiting the Viewport (Mouse)
+Panning the Viewport (Mouse)
+Zooming the Viewport (Mouse)
+Orbiting the Viewport (Keyboard)
+Panning the Viewport (Keyboard)
+Zooming the Viewport (Keyboard)
+Viewport Perspective/Orthographic Toggle
+Front/Side/Top View Navigation
+Camera View
+Zoom to Selected
+Frame All
+Frame Selected
+
+Topic: Object Interaction (Selection)
+
+Selecting a Single Object
+Box Selecting Multiple Objects
+Circle Selecting Multiple Objects
+Lasso Selecting Multiple Objects
+Selecting All Objects (A Key)
+Deselecting All Objects (Alt+A Key)
+Inverting Selection
+Select by Trait (Type, Material, etc.)
+Random Selection
+Linked Selection
+
+Topic: Object Transformation
+
+Translating Objects (Gizmo)
+Rotating Objects (Gizmo)
+Scaling Objects (Gizmo)
+Numerical Transform Input (Properties Editor)
+Snapping During Transformation
+Transform Orientations (Global, Local, Normal, etc.)
+Pivot Point Selection
+Proportional Editing (using falloff types)
+
+Topic: Object Modes
+
+Switching between Object Mode and Edit Mode
+Understanding Object Mode Functionality
+Understanding Edit Mode Functionality
+Vertex Select Mode (Edit Mode)
+Edge Select Mode (Edit Mode)
+Face Select Mode (Edit Mode)
+
+Topic: Properties Editor
+
+Understanding the Properties Editor Structure
+Object Properties Tab
+Object Data Properties Tab
+Modifiers Properties Tab
+Materials Properties Tab
+Texture Properties Tab
+Particle Properties Tab
+Physics Properties Tab
+World Properties Tab
+Scene Properties Tab
+
+Topic: Outliner
+
+Understanding the Outliner Structure
+Selecting Objects in the Outliner
+Hiding/Showing Objects in the Outliner
+Renaming Objects in the Outliner
+Organizing Objects with Collections (Outliner)
+Filtering Objects in the Outliner
+
+Topic: Timeline
+
+Understanding the Timeline Structure
+Playing/Pausing Animation
+Scrubbing through Animation
+Setting Start/End Frames
+Setting Current Frame
+
+Topic: Editors (General)
+
+Splitting Editor Windows
+Joining Editor Windows
+Maximizing/Minimizing Editor Windows
+Toggling Full Screen Area
+Closing Editor Windows
+Resizing Editor Windows
+
+Topic: Workspaces
+
+Switching between Workspaces
+Creating Custom Workspaces
+Modifying Workspaces
+Saving Workspaces
+
+Topic: Header Bar
+
+Understanding Header Bar Functionality
+Scene Properties (Header)
+Snapping Options (Header)
+Transform Orientations (Header)
+Shading Modes (Header)
+Overlays (Header)
+Viewport Shading (Header)
+
+Topic: Status Bar
+
+Understanding Status Bar Information
+Contextual Information (Status Bar)
+Tool Information (Status Bar)
+Scene Statistics (Status Bar)
+
+Topic: Pop-ups and Context Menus
+
+Using Pop-up Menus
+Using Context Menus (Right-Click)
+
+Topic: Pie Menus
+
+Using Pie Menus
+Customizing Pie Menus
+
+Topic: Search Functionality
+
+Using the Search Bar
+
+Topic: Themes
+
+Applying Pre-made Themes
+Customizing Themes
+
+Topic: Keymaps
+
+Using Default Keymap
+Customizing Keymaps
+Keymap Presets
+
+Topic: Mouse/3D Mouse/Touch Navigation
+
+Mouse Button Configuration
+3D Mouse Navigation
+Touch Navigation
+
+Topic: Coordinate Systems and Transformations
+
+Global X-Axis: Understanding the direction and meaning of the global X-axis
+Global Y-Axis: Understanding the direction and meaning of the global Y-axis
+Global Z-Axis: Understanding the direction and meaning of the global Z-axis
+Local X-Axis: Understanding the direction and meaning of an object's local X-axis
+Local Y-Axis: Understanding the direction and meaning of an object's local Y-axis
+Local Z-Axis: Understanding the direction and meaning of an object's local Z-axis
+Object Origin: Identifying and manipulating an object's origin point
+Translating along the X-Axis: Moving an object specifically along the X-axis
+Translating along the Y-Axis: Moving an object specifically along the Y-axis
+Translating along the Z-Axis: Moving an object specifically along the Z-axis
+Rotating around the X-Axis: Rotating an object around its local X-axis
+Rotating around the Y-Axis: Rotating an object around its local Y-axis
+Rotating around the Z-Axis: Rotating an object around its local Z-axis
+Scaling along the X-Axis: Changing the size of an object along its local X-axis
+Scaling along the Y-Axis: Changing the size of an object along its local Y-axis
+Scaling along the Z-Axis: Changing the size of an object along its local Z-axis
+Uniform Scaling: Scaling an object equally in all dimensions
+Non-Uniform Scaling: Scaling an object differently in each dimension
+Applying Translation: Making a translation permanent in an object's data
+Applying Rotation: Making a rotation permanent in an object's data
+Applying Scale: Making a scale transformation permanent in an object's data
+
+
+Topic: Object Relationships
+
+Creating a Parent-Child Relationship: Establishing a parent-child link between two objects
+Object Hierarchy: Understanding how parent-child relationships create a hierarchy
+Transforming Parent Objects: How transformations of a parent affect its children
+Transforming Child Objects: How transformations of a child are relative to its parent
+Clearing Parent Relationships: Removing the parent-child link between objects
+Grouping Objects: Combining objects into a group for easier selection and manipulation
+Ungrouping Objects: Separating objects from a group
+
+Topic: Scene Management and Data
+
+Collections: Adding objects to a collection
+Removing Objects from Collections: Taking objects out of a collection
+Creating Collections: Making new collections to organize objects
+Deleting Collections: Removing collections from the scene
+Mesh Data:  Understanding the basic structure of a mesh (vertices, edges, faces)
+Curve Data: Understanding the basic structure of a curve (control points, segments)
+Surface Data: Understanding the basic concept of NURBS surfaces
+Text Data: Understanding how text is represented in Blender
+Metaball Data: Understanding how metaballs are defined and work
+
+Topic: Units and Precision
+
+Setting Scene Units (Metric/Imperial): Choosing the unit system for the scene
+Understanding Numerical Precision:  The concept of floating-point limitations
+
+Topic: Performance
+
+Optimizing Scene Performance: Basic tips for reducing scene complexity (not specific tools)
+
+Topic: Viewport Orbiting
+
+Orbiting with Middle Mouse Button
+Orbiting with Numpad 4 Key (Left)
+Orbiting with Numpad 6 Key (Right)
+Orbiting with Numpad 8 Key (Up)
+Orbiting with Numpad 2 Key (Down)
+Orbiting with Alt + Left Mouse Button
+
+Topic: Viewport Panning
+
+Panning with Shift + Middle Mouse Button
+Panning with Shift + Numpad 4 Key (Left)
+Panning with Shift + Numpad 6 Key (Right)
+Panning with Shift + Numpad 8 Key (Up)
+Panning with Shift + Numpad 2 Key (Down)
+Panning with Shift + Alt + Left Mouse Button
+
+Topic: Viewport Zooming
+
+Zooming with Mouse Wheel
+Zooming with Ctrl + Middle Mouse Button
+Zooming with Numpad + Key (Zoom In)
+Zooming with Numpad - Key (Zoom Out)
+Zooming with Ctrl + Alt + Left Mouse Button (and mouse movement)
+
+Topic: View Presets
+
+Switching to Front View (Numpad 1)
+Switching to Right View (Numpad 3)
+Switching to Top View (Numpad 7)
+Switching to Camera View (Numpad 0)
+Switching to Front View (Aligned) (Alt + Numpad 1)
+Switching to Right View (Aligned) (Alt + Numpad 3)
+Switching to Top View (Aligned) (Alt + Numpad 7)
+
+Topic: Focus and Framing
+
+Centering View on Selected Object(s) (Numpad.)
+Framing Selected Object(s) in View
+Framing All Objects in View
+Zoom to Mouse Position
+
+Topic: Navigation Modes
+
+Trackball Navigation Mode
+Turntable Navigation Mode
+Walk/Fly Navigation Mode
+
+Topic: Depth Navigation
+
+Adjusting Depth of Field in Viewport
+
+Topic: View Clipping
+
+Using Clipping Planes to Limit View
+
+Topic: Local View
+
+Toggling Local View for Selected Object(s)
+
+Topic: Quad View
+
+Toggling Quad View
+
+Topic: Full Screen Mode
+
+Entering and Exiting Full Screen Mode
+
+Topic: Viewport Rendering
+
+Switching to Wireframe Shading Mode
+Switching to Solid Shading Mode
+Switching to Material Preview Shading Mode
+Switching to Rendered Shading Mode
+
+
+Topic: Interface Configuration
+
+Changing the Theme:  Selecting a different pre-made theme
+Customizing Theme Colors: Adjusting individual colors within a theme (e.g., background color, text color)
+Customizing Theme Fonts: Changing the font used in the interface
+Customizing Theme Icons:  Selecting different icon sets
+Adding an Editor to a Workspace:  Adding a new editor type to an existing workspace
+Removing an Editor from a Workspace:  Taking an editor out of a workspace
+Rearranging Editors in a Workspace: Changing the layout of editors within a workspace
+Saving a Custom Workspace:  Saving a modified workspace layout
+Setting 3D Viewport Overlays:  Enabling/disabling overlays like grid, axes, wireframes
+Changing 3D Viewport Grid Scale:  Adjusting the size of the grid in the 3D Viewport
+Changing 3D Viewport Background Color:  Setting a different background color for the 3D Viewport
+
+Topic: Input Configuration
+
+Changing a Keyboard Shortcut:  Assigning a new key combination to a specific action
+Resetting a Keyboard Shortcut:  Reverting a keyboard shortcut to its default
+Selecting a Keymap Preset:  Choosing a pre-defined keymap (e.g., Blender, Industry Compatible, 2.7x)
+Configuring Mouse Sensitivity: Adjusting how quickly the view rotates or pans with mouse movement
+Swapping Mouse Buttons:  Switching the functions of the left and right mouse buttons
+Setting 3D Mouse Navigation:  Configuring the axes and sensitivity of a 3D mouse
+
+Topic: System & Add-on Configuration
+
+Setting File Paths:  Defining default directories for saving and loading files
+Enabling an Add-on:  Activating an add-on to use its features
+Disabling an Add-on:  Deactivating an add-on
+Configuring Add-on Settings:  Adjusting the options for an add-on
+
+Topic: Save & Load Configuration
+
+Saving a Startup File:  Setting a.blend file to load automatically when Blender starts
+Exporting Preferences:  Saving current Blender configuration to a file
+Importing Preferences:  Loading Blender configuration from a file
+
+Topic: Viewport Basics
+
+Selecting an Object with Right Mouse Button
+Selecting Multiple Objects with Shift + Right Mouse Button
+Box Selecting Objects
+Circle Selecting Objects
+Lasso Selecting Objects
+Toggling Edit Mode for Selected Object
+Translating Selected Object(s)
+Rotating Selected Object(s)
+Scaling Selected Object(s)
+
+Topic: Viewport Display
+
+Switching to Wireframe Shading Mode
+Switching to Solid Shading Mode
+Switching to Material Preview Shading Mode
+Switching to Rendered Shading Mode
+Enabling/Disabling Grid Overlay
+Enabling/Disabling Axes Overlay
+Enabling/Disabling Object Origins Overlay
+Enabling/Disabling Wireframe Overlay
+Adjusting Viewport Shading (Studio, Matcap, etc.)
+
+Topic: Object Visualization
+
+Enabling/Disabling Object Names Display
+Enabling/Disabling Object Color Display
+Enabling/Disabling Bounding Boxes Display
+Hiding Selected Object(s)
+Unhiding Hidden Object(s)
+Setting Near Clipping Plane
+Setting Far Clipping Plane
+
+Topic: Viewport Interaction
+
+Using the Snapping Options in the Header
+Using the Transform Orientations Menu in the Header
+Using the Shading Mode Menu in the Header
+Using the Overlays Menu in the Header
+Accessing the Context Menu with Right-Click
+Using the Translation Gizmo
+Using the Rotation Gizmo
+Using the Scale Gizmo
+
+Topic: Advanced Viewport Features
+
+Toggling Quad View
+Toggling Local View
+Switching to Camera View
+Adjusting Depth of Field
+
+Topic: Outliner Basics
+
+Switching to List View
+Switching to Tree View
+Expanding/Collapsing Hierarchy Levels
+Filtering Objects by Type
+Filtering Objects by Name
+Sorting Objects by Name
+Sorting Objects by Type
+Sorting Objects by Hierarchy
+
+Topic: Object Hierarchy and Relationships
+
+Identifying Parent Objects in the Outliner
+Identifying Child Objects in the Outliner
+Creating a Parent-Child Relationship
+Clearing a Parent-Child Relationship
+Creating a New Collection
+Adding an Object to a Collection
+Removing an Object from a Collection
+Deleting a Collection
+
+Topic: Outliner Operations
+
+Selecting an Object in the Outliner
+Deselecting an Object in the Outliner
+Renaming an Object in the Outliner
+Hiding an Object from the Viewport
+Unhiding an Object in the Viewport
+Deleting an Object
+Moving an Object Up in the Hierarchy
+Moving an Object Down in the Hierarchy
+
+Topic: Advanced Outliner Features
+
+Identifying Mesh Data-Blocks
+Identifying Material Data-Blocks
+Identifying Other Data-Blocks (e.g., lights, cameras)
+Using Restriction Toggles (e.g., show only visible objects)
+Accessing the Outliner Context Menu
+
+Topic: Properties Editor Basics
+
+Switching Between Property Tabs (Object, Object Data, Modifiers, etc.)
+Identifying the Active Object in the Properties Editor
+Understanding Context Sensitivity (how properties change based on selection)
+
+Topic: Property Types
+
+Adjusting Numeric Properties with Sliders
+Adjusting Numeric Properties with Input Fields
+Toggling Boolean Properties (checkboxes)
+Selecting Options from Dropdown Menus
+Choosing Colors with Color Pickers
+Using Vector Properties (defining X, Y, Z values)
+
+Topic: Key Property Categories - Object Properties
+
+Adjusting Object Location (X, Y, Z)
+Adjusting Object Rotation (X, Y, Z)
+Adjusting Object Scale (X, Y, Z)
+Showing/Hiding an Object in Viewport
+Changing Object Display Name
+Parenting an Object to Another
+
+Topic: Key Property Categories - Object Data Properties
+
+(Mesh) Adjusting Vertex Coordinates
+(Mesh) Assigning Vertex Groups
+(Curve) Adjusting Control Point Positions
+(Camera) Changing Camera Focal Length
+(Camera) Changing Camera Clipping Planes
+(Light) Changing Light Type (Point, Sun, Spot, etc.)
+(Light) Adjusting Light Color
+(Light) Adjusting Light Energy/Strength
+
+Topic: Key Property Categories - Modifiers
+
+Adding a Modifier to an Object
+Removing a Modifier from an Object
+Adjusting Modifier Settings (specific to each modifier type)
+Reordering Modifiers in the Stack
+Applying a Modifier
+
+Topic: Key Property Categories - Materials
+
+Creating a New Material
+Assigning a Material to an Object
+Changing Material Base Color
+Adjusting Material Metallic Property
+Adjusting Material Roughness Property
+
+Topic: Key Property Categories - Textures
+
+Adding a Texture to a Material
+Selecting Texture Type (Image, Procedural, etc.)
+Adjusting Texture Mapping Coordinates
+
+Topic: Key Property Categories - Physics
+
+Enabling Rigid Body Physics for an Object
+Setting Object Mass
+Setting Object Collision Shape
+
+Topic: Key Property Categories - Particles
+
+Creating a Particle System
+Adjusting Particle Number
+Adjusting Particle Lifetime
+Setting Particle Emission Source
+
+Topic: Key Property Categories - World Properties
+
+Changing World Background Color
+Adding an Environment Texture
+
+Topic: Key Property Categories - Scene Properties
+
+Setting Output File Format (PNG, JPEG, etc.)
+Setting Render Resolution
+Choosing Render Engine (Eevee, Cycles)
+
+Topic: Advanced Features
+
+Adding a Driver to a Property
+Creating a Custom Property
+Pinning a Property for Quick Access
+
+Topic: Timeline Basics
+
+Identifying the Current Frame Indicator
+Identifying the Playhead
+Identifying Keyframes on the Timeline
+Identifying Markers on the Timeline
+Changing the Start Frame of the Animation
+Changing the End Frame of the Animation
+
+Topic: Animation Playback
+
+Playing the Animation (Spacebar, Play Button)
+Pausing the Animation (Spacebar, Pause Button)
+Stopping the Animation (Stop Button)
+Rewinding the Animation (Rewind Button)
+Changing Playback Speed (Speed Slider)
+Enabling/Disabling Looping
+Setting the Frame Range for Playback
+
+Topic: Working with Keyframes
+
+Inserting a Keyframe for Location (I Key)
+Inserting a Keyframe for Rotation (I Key)
+Inserting a Keyframe for Scale (I Key)
+Inserting a Keyframe for Other Properties (I Key)
+Selecting a Keyframe
+Selecting Multiple Keyframes
+Moving a Keyframe on the Timeline
+Changing the Value of a Keyframe
+Deleting a Keyframe
+
+Topic: Timeline Views
+
+Switching to Dope Sheet View
+Switching to Graph Editor View
+Switching to NLA Editor View
+
+Topic: Advanced Timeline Features
+
+Enabling Automatic Keyframing
+Disabling Automatic Keyframing
+Accessing the Timeline Context Menu
+Changing Timeline Display Settings (e.g., show seconds)
+
+
+Topic: Info Editor Basics
+
+Locating the Info Editor in the Blender Interface
+Identifying Operator Reports in the Info Editor
+Identifying Warning Messages
+Identifying Error Messages
+Scrolling through Info Editor Output
+Clearing the Info Editor Display
+
+Topic: Types of Information Displayed
+
+Understanding Operator Reports (e.g., "Added Cube", "Rotated Object")
+Recognizing Python Script Output (if applicable)
+Interpreting System Messages (e.g., "Saved File", "Loaded Scene")
+Understanding Warning Message Types (e.g., "Object has no material")
+Understanding Error Message Types (e.g., "Cannot divide by zero")
+
+Topic: Using the Info Editor for Troubleshooting
+
+Identifying the Source of an Error (from the error message)
+Searching for Solutions Online Based on Error Messages
+Copying an Error Report for Sharing
+
+Topic: Advanced Features
+
+Accessing the Info Editor History
+Filtering Messages by Type (e.g., show only errors)
+Using the Info Editor Context Menu
+
+Topic: Text Editor Basics
+
+Creating a New Text File in the Text Editor
+Opening an Existing Text File
+Saving a Text File
+Saving a Text File with a New Name
+
+Topic: Text Editing Features
+
+Typing Text in the Text Editor
+Selecting Text
+Copying Text (Ctrl+C)
+Pasting Text (Ctrl+V)
+Deleting Text (Delete Key, Backspace Key)
+Using Line Numbers to Navigate
+Indenting Text (Tab Key)
+Unindenting Text (Shift+Tab Key)
+Changing Font Size
+Changing Font Family
+Making Text Bold
+Making Text Italic
+Finding Text (Ctrl+F)
+Replacing Text (Ctrl+H)
+
+Topic: Python Scripting in the Text Editor
+
+Running a Python Script (Alt+P)
+Viewing Script Output in the Console
+Accessing Python Script Templates
+Using the Python Autocomplete Feature
+
+Topic: Advanced Features
+
+Switching to Python Mode
+Switching to GLSL Mode
+Accessing the Text Editor Context Menu
+Changing Text Editor Theme Colors
+Enabling/Disabling Line Numbers
+Enabling/Disabling Syntax Highlighting
+
+Topic: Python Console Basics
+
+Opening the Python Console in Blender
+Typing Python Code in the Console
+Executing Python Code (Enter Key)
+Clearing the Console Output
+Scrolling Through Console History
+
+Topic: Interacting with Blender
+
+Accessing the `bpy` Module (Blender Python API)
+Getting the Active Object (`bpy.context.active_object`)
+Getting the Selected Objects (`bpy.context.selected_objects`)
+Accessing Object Location (`object.location`)
+Changing Object Location (`object.location = (x, y, z)`)
+Accessing Object Rotation (`object.rotation_euler`)
+Changing Object Rotation (`object.rotation_euler = (x, y, z)`)
+Accessing Object Scale (`object.scale`)
+Changing Object Scale (`object.scale = (x, y, z)`)
+Executing an Operator (e.g., `bpy.ops.mesh.primitive_cube_add()`)
+
+Topic: Python Console Features
+
+Using Autocompletion to Find Python Commands
+Using Autocompletion to Explore `bpy` Module
+Inspecting Object Properties with `dir(object)`
+Accessing Previous Commands with Up/Down Arrow Keys
+Copying Text from the Console
+Pasting Text into the Console
+
+Topic: Advanced Features
+
+Importing Python Modules (`import math`)
+Printing Values to the Console (`print(object.location)`)
+Using the Console for Debugging (identifying error messages)
+Accessing the Python Console Context Menu
+
+Topic: Interface
+
+Changing the Theme (e.g., to Dark, Light, or another preset)
+Customizing a Theme's Colors (e.g., background, text, interface elements)
+Customizing a Theme's Fonts (e.g., interface font, text editor font)
+Adjusting the 3D Viewport's Background Color
+Enabling/Disabling Grid in the 3D Viewport
+Changing the Grid Scale in the 3D Viewport
+Enabling/Disabling Axes in the 3D Viewport
+Setting the Interface Language
+Changing the Default File Save Location
+
+Topic: Editing
+
+Increasing/Decreasing the Number of Undo Steps
+Enabling/Disabling Annotations
+Changing the Units of Measurement (Metric/Imperial)
+
+Topic: Input
+
+Changing a Keyboard Shortcut
+Resetting a Keyboard Shortcut to Default
+Selecting a Keymap Preset (e.g., Blender, Industry Compatible)
+Adjusting Mouse Sensitivity
+Swapping Left/Right Mouse Button Functions
+
+Topic: Navigation
+
+Changing Orbit Style (Trackball/Turntable)
+Adjusting Orbit Sensitivity
+Adjusting Pan Sensitivity
+Adjusting Zoom Sensitivity
+Enabling/Disabling Zoom to Mouse Position
+
+Topic: Add-ons
+
+Enabling an Add-on
+Disabling an Add-on
+Accessing Add-on Preferences
+
+Topic: System
+
+Setting Memory Limits
+Changing Autosave Frequency
+Enabling/Disabling File Versioning
+
+Topic: Experimental
+
+Enabling an Experimental Feature
+Disabling an Experimental Feature
+

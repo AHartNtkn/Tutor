@@ -1,0 +1,12 @@
+{
+    "topics": [
+        {
+            "id": "orbiting_the_viewport",
+            "name": "Orbiting the Viewport",
+            "prerequisites": [],
+            "tags": ["viewport", "mouse", "fundamentals", "navigation"],
+            "content": "Use the mouse to orbit the main object of attention.",
+            "directory": "fundamentals/orbiting_the_viewport"
+        }
+    ]
+} 
