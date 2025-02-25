@@ -1,9 +1,69 @@
-The idea is that some problems use an interactable instead of a list of options. Ideally, these should be implemented in pure html and javascript using either interctable canvas or SVGs which are manipulated by the javascript live. Some tasks may be simple enough to be implemented with custom forms (for example, an interface that's just a text input and a live text update to provide feedback). This should mean that each app is a single html file, and a js file that is loaded when the problem is loaded.
+# Interactables Interface Documentation
 
-The applications should live inside the knowledge graphs in a folder called "apps" next to the main index.json file.
+## Overview
+Interactables are embeddable interactive applications that replace simple multiple-choice questions with engaging, interactive exercises. They provide a sandboxed environment where users manipulate state to demonstrate mastery.
 
-The apps need to be embedable into a page, and should require json input, provided by the quiz question, to get the specific scenario being tested.
+## Implementation Requirements
+1. **Technology**: Implement using pure HTML and JavaScript with interactive canvas or SVGs
+2. **File Structure**: Single self-contained HTML file with inline JavaScript
+3. **Location**: Store in the `knowledge_graphs/apps/` directory
+4. **Embedding**: Must be iframe-compatible and communicate with the parent page
 
-The apps should be sandboxes, where the user is tasked to put the app into a specific state, and this state should make a signal which indicates a correct answer; the same as if "submit answer" were pressed.
+## Communication Protocol
+Interactables use the `window.postMessage()` API to communicate with the parent page:
 
-For sandbox-style interactables that don't have a clear "wrong answer" analog (like manipulating a 3D object or constructing a graph), there should be a "give up" button, allowing the user to move on, counting as a wrong answer/"again" grade. For quiz-style interactables that already provide feedback for wrong answers (like multiple-choice quizzes), no "give up" button is needed.
+1. **Ready Signal**:
+   ```javascript
+   window.parent.postMessage({ type: 'ready' }, '*');
+   ```
+
+2. **Initialization**:
+   The parent page sends configuration data after receiving the ready signal:
+   ```javascript
+   // Parent sends:
+   iframe.contentWindow.postMessage({
+       type: 'initialize',
+       data: problemData
+   }, '*');
+   ```
+
+3. **Answer Submission**:
+   When a user submits an answer, the interactable reports the result:
+   ```javascript
+   window.parent.postMessage({
+       type: 'answerSubmitted',
+       isCorrect: true|false
+   }, '*');
+   ```
+
+4. **Resize Handling**:
+   When content changes size, notify the parent to adjust iframe height:
+   ```javascript
+   window.parent.postMessage({
+       type: 'resize',
+       height: document.documentElement.scrollHeight
+   }, '*');
+   ```
+
+## Data Format
+Each interactable should accept a JSON configuration object that defines:
+- Question content/scenario
+- Correct answer criteria
+- Any feedback or explanations
+- Required assets or resources
+
+## UI Requirements
+- Provide clear instructions on what the user needs to do
+- For sandbox-style interactables without clear wrong answers, include a "give up" button
+- For quiz-style interactables with defined wrong answers, provide appropriate feedback
+- Match the application's visual style and theme
+
+## Implementation Example
+See `knowledge_graphs/apps/multi_choice_quiz.html` for a reference implementation.
+
+## Creating New Interactables
+1. Create a new HTML file in the `knowledge_graphs/apps/` directory
+2. Implement the communication protocol
+3. Create a class to encapsulate interactable functionality
+4. Handle initialization, user interaction, and result submission
+5. Add appropriate styling to match the application theme
