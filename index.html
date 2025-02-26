@@ -6,8 +6,6 @@
     <title>Adaptive Learning System</title>
     <!-- MathJax for LaTeX rendering -->
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <!-- HTMX for dynamic updates -->
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <!-- Styles -->
     <link rel="stylesheet" href="style.css">
 </head>
@@ -145,12 +143,12 @@
     </template>
 
     <template id="progress-detail-template">
-        <div>
+        <div class="progress-detail-item">
             <div>
                 <h3 class="lesson-name"></h3>
                 <span class="lesson-status"></span>
             </div>
-            <div>
+            <div class="progress-stats">
                 <div>
                     <div>
                         <span>Interval:</span>
@@ -165,7 +163,7 @@
                         <span class="reps"></span>
                     </div>
                 </div>
-                <div>
+                <div class="progress-dates">
                     <div>
                         <span>Last Review:</span>
                         <span class="last-review"></span>
