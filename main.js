@@ -932,6 +932,7 @@ class ReviewManager {
             } else {
                 // Show the red "Next Problem" button
                 const nextButton = this.view.querySelector('.next-review');
+                nextButton.textContent = 'Next Problem';
                 nextButton.classList.add('error');
                 nextButton.classList.remove('hidden');
             }

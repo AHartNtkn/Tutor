@@ -1,580 +1,314 @@
+/* Color scheme */
 :root {
-    /* Primary colors */
-    --primary-color: #6366f1;      /* Indigo 500 */
-    --secondary-color: #4f46e5;    /* Indigo 600 */
-    --accent-color: #a855f7;       /* Purple 500 */
-    
-    /* Background colors */
-    --background-color: #0f172a;   /* Slate 900 */
-    --card-background: #1e293b;    /* Slate 800 */
-    --content-background: #334155; /* Slate 700 */
-    
-    /* Text colors */
-    --text-color: #f8fafc;         /* Slate 50 */
-    --text-muted: #94a3b8;         /* Slate 400 */
-    --text-bright: #ffffff;        /* White */
-    
-    /* Border colors */
-    --border-color: #475569;       /* Slate 600 */
-    
-    /* Status colors */
-    --success-color: #22c55e;      /* Green 500 */
-    --error-color: #ef4444;        /* Red 500 */
-    --warning-color: #f59e0b;      /* Amber 500 */
-    
-    /* Layout */
-    --header-height: 60px;
+    --primary-color: #686de0;
+    --primary-dark: #4834d4;
+    --primary-light: #a3a7e4;
+    --secondary-color: #30336b;
+    --text-color: #f5f6fa;
+    --text-light: #dcdde1;
+    --success-color: #44bd32;
+    --warning-color: #e1b12c;
+    --danger-color: #c23616;
+    --white: #f5f6fa;
+    --border-color: #4834d4;
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --background-dark: #2c2c54;
+    --background-light: #30336b;
 }
 
-* {
+/* Essential functionality styles */
+.hidden {
+    display: none !important;
+}
+
+/* Basic layout */
+body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--background-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: var(--text-color);
     line-height: 1.5;
+    background-color: var(--background-dark);
 }
 
 header {
-    height: var(--header-height);
-    background-color: var(--card-background);
-    border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
+    padding: 1rem;
+    background-color: var(--background-dark);
+    box-shadow: var(--shadow);
     align-items: center;
-    padding: 0 2rem;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
+    color: var(--white);
 }
 
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    color: var(--text-bright);
+header button {
+    background-color: var(--primary-light);
 }
 
-.data-controls {
-    display: flex;
-    gap: 1rem;
-}
-
-button {
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.375rem;
-    background-color: var(--card-background);
-    color: var(--text-color);
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-button:hover {
-    background-color: var(--content-background);
-    border-color: var(--accent-color);
-    color: var(--text-bright);
-}
-
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+header button:hover {
+    background-color: var(--primary-color);
 }
 
 main {
+    padding: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Button styles */
+button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    background-color: var(--primary-color);
+    color: var(--white);
+    transition: all 0.2s;
+    margin: 0.5rem;
+}
+
+button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+button.back-button {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+button.back-button:hover {
+    background-color: var(--border-color);
+}
+
+/* Grade buttons */
+.grade-buttons {
     display: flex;
-    margin-top: var(--header-height);
-    height: calc(100vh - var(--header-height));
+    gap: 0.5rem;
+    justify-content: center;
+    margin: 1rem 0;
+    width: 100%;
+    max-width: 400px;
 }
 
-.content-panel {
-    flex: 1;
-    padding: 2rem;
-    overflow-y: auto;
+.grade-hard {
+    background-color: var(--danger-color);
 }
 
-h2 {
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--text-bright);
+.grade-good {
+    background-color: var(--success-color);
 }
 
-h3 {
-    margin-bottom: 1rem;
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: var(--text-bright);
+.grade-easy {
+    background-color: var(--primary-color);
 }
 
-.progress-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.375rem;
-    margin-bottom: 0.75rem;
-    background-color: var(--content-background);
-}
-
+/* Card layout and styling */
 #cards-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1rem;
+    padding: 1rem 0;
 }
 
 .card {
+    background-color: var(--background-light);
     border: 1px solid var(--border-color);
-    border-radius: 0.375rem;
-    padding: 1rem;
-    background-color: var(--card-background);
-    cursor: pointer;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
     transition: all 0.2s;
+    cursor: pointer;
+    color: var(--text-color);
 }
 
 .card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
-    border-color: var(--accent-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-color: var(--primary-light);
+    background-color: var(--secondary-color);
 }
 
-.card-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: var(--text-bright);
+.card h3 {
+    margin-top: 0;
+    color: var(--primary-light);
 }
 
 .card-description {
-    color: var(--text-muted);
-    margin-bottom: 1rem;
+    color: var(--text-light);
+    margin: 0.5rem 0;
 }
 
-.card-footer {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.875rem;
-    color: var(--text-muted);
+.card-type,
+.card-due {
+    display: inline-block;
+    margin-right: 1rem;
+    font-size: 0.9em;
+    color: var(--text-light);
 }
 
-/* For MathJax rendered content */
-.math-content {
-    overflow-x: auto;
-    padding: 1rem;
-    background-color: var(--content-background);
-    border-radius: 0.375rem;
-    margin: 1rem 0;
-    border: 1px solid var(--border-color);
-    width: 100%;
-}
-
-/* Lesson and Review Views */
-.lesson-view,
-.review-view {
+/* Views styling */
+#progress-details-view,
+#lesson-view,
+#review-view {
     position: fixed;
-    top: var(--header-height);
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--background-color);
-    overflow-y: auto;
+    background: var(--background-dark);
     padding: 2rem;
-    z-index: 50;
-    text-align: center;
+    overflow-y: auto;
+    z-index: 1000;
 }
 
-.lesson-header,
-.review-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+/* Lesson and Review Content */
+.lesson-title,
+.review-title {
+    color: var(--primary-color);
     margin-bottom: 2rem;
-}
-
-.back-button {
-    font-size: 1.125rem;
-    padding: 0.5rem 1rem;
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: var(--text-color);
-}
-
-.back-button:hover {
-    color: var(--accent-color);
-}
-
-.lesson-content,
-.review-content {
-    max-width: 800px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-
-/* Removed test proposals */
-
-.lesson-objectives {
-    margin-bottom: 2rem;
-    background-color: var(--card-background);
-    padding: 1.5rem;
-    border-radius: 0.375rem;
-    border: 1px solid var(--border-color);
 }
 
 .objectives-list {
     list-style-type: none;
-    padding-left: 1.5rem;
+    padding-left: 0;
 }
 
 .objectives-list li {
+    padding: 0.5rem 0;
     position: relative;
-    margin-bottom: 0.5rem;
-    color: var(--text-muted);
+    padding-left: 1.5rem;
 }
 
-.objectives-list li::before {
-    content: "•";
+.objectives-list li:before {
+    content: "✓";
+    color: var(--primary-color);
     position: absolute;
-    left: -1.5rem;
-    color: var(--accent-color);
-}
-
-.lesson-explanation,
-.lesson-example,
-.lesson-practice {
-    margin-bottom: 2rem;
-    background-color: var(--card-background);
-    padding: 1.5rem;
-    border-radius: 0.375rem;
-    border: 1px solid var(--border-color);
-}
-
-.show-solution {
-    margin: 1rem 0;
-    background-color: var(--primary-color);
-    color: var(--text-bright);
-    border: none;
-}
-
-.show-solution:hover {
-    background-color: var(--secondary-color);
-}
-
-.problem-options {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin: 1rem 0;
-}
-
-.option-button {
-    padding: 1rem;
-    text-align: left;
-    border: 1px solid var(--border-color);
-    border-radius: 0.375rem;
-    background-color: var(--content-background);
-    color: var(--text-color);
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.option-button:hover {
-    background-color: var(--card-background);
-    border-color: var(--accent-color);
-}
-
-.option-button.selected {
-    border-color: var(--primary-color);
-    background-color: rgba(99, 102, 241, 0.2);
-}
-
-.option-button.correct {
-    border-color: var(--success-color);
-    background-color: rgba(34, 197, 94, 0.2);
-}
-
-.option-button.incorrect {
-    border-color: var(--error-color);
-    background-color: rgba(239, 68, 68, 0.2);
-}
-
-.practice-controls,
-.review-controls {
-    width: 100%;
-    max-width: 800px;
-    margin: 1.5rem auto 0;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-}
-
-.grade-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    width: 400px;
-    margin: 0 auto;
-}
-
-.grade-hard,
-.grade-good,
-.grade-easy {
-    flex: 1;
-    max-width: 120px;
-    text-align: center;
-}
-
-.grade-again {
-    background-color: var(--error-color);
-    color: var(--text-bright);
-    border: none;
-}
-
-.grade-hard {
-    background-color: var(--warning-color);
-    color: var(--text-bright);
-    border: none;
-}
-
-.grade-good {
-    background-color: var(--primary-color);
-    color: var(--text-bright);
-    border: none;
-}
-
-.grade-easy {
-    background-color: var(--success-color);
-    color: var(--text-bright);
-    border: none;
-}
-
-.problem-feedback {
-    margin-top: 1rem;
-    padding: 1rem;
-    border-radius: 0.375rem;
-}
-
-.problem-feedback.correct {
-    background-color: rgba(34, 197, 94, 0.2);
-    border: 1px solid var(--success-color);
-}
-
-.problem-feedback.incorrect {
-    background-color: rgba(239, 68, 68, 0.2);
-    border: 1px solid var(--error-color);
-}
-
-.lesson-complete {
-    text-align: center;
-    padding: 2rem;
-    background-color: var(--card-background);
-    border-radius: 0.375rem;
-    border: 1px solid var(--border-color);
-}
-
-.completion-message {
-    margin: 1rem 0;
-    color: var(--text-muted);
-}
-
-.hidden {
-    display: none;
-}
-
-/* Progress Details View */
-.progress-details-view {
-    position: fixed;
-    top: var(--header-height);
     left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--background-color);
-    overflow-y: auto;
-    padding: 2rem;
-    z-index: 50;
 }
 
-.progress-details-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.progress-details-content {
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.progress-details-filters {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.search-input,
-.filter-select {
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.375rem;
-    background-color: var(--card-background);
+.explanation-content,
+.example-problem,
+.example-solution,
+.example-explanation,
+.problem-text,
+.problem-feedback {
+    background-color: var(--background-light);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin: 1rem 0;
     color: var(--text-color);
-    font-size: 1rem;
 }
 
-.search-input {
-    flex: 1;
+.problem-counter {
+    color: var(--text-light);
+    font-size: 0.9em;
 }
 
-.search-input::placeholder {
-    color: var(--text-muted);
-}
-
-.filter-select {
-    min-width: 150px;
+/* Progress details styling */
+.progress-details-list {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem 0;
 }
 
 .progress-detail-item {
-    background-color: var(--card-background);
+    background-color: var(--background-light);
     border: 1px solid var(--border-color);
-    border-radius: 0.375rem;
+    border-radius: 8px;
     padding: 1.5rem;
-    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    color: var(--text-color);
 }
 
-.progress-detail-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
+/* Form elements */
+input[type="text"],
+select {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-right: 1rem;
+    background-color: var(--background-light);
+    color: var(--text-color);
 }
 
-.lesson-name {
-    margin: 0;
-    color: var(--text-bright);
+/* Status indicators */
+.not-started {
+    color: var(--text-light);
 }
 
-.lesson-status {
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.875rem;
-    font-weight: 500;
+.started {
+    color: var(--warning-color);
 }
 
-.lesson-status.not-started {
-    background-color: var(--content-background);
-    color: var(--text-muted);
-}
-
-.lesson-status.started {
-    background-color: rgba(168, 85, 247, 0.2);
-    color: var(--accent-color);
-}
-
-.lesson-status.completed {
-    background-color: rgba(34, 197, 94, 0.2);
+.completed {
     color: var(--success-color);
 }
 
-.progress-detail-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+/* Error state */
+.error {
+    color: var(--danger-color);
 }
 
-.progress-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+button.error {
+    background-color: var(--danger-color);
+    color: var(--white) !important;
+}
+
+/* Interactive elements */
+.interactable-container {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    background-color: var(--background-light);
+}
+
+/* Student info */
+#student-name {
+    font-weight: bold;
+    margin-right: 0.5rem;
+    color: var(--white);
+}
+
+#student-avatar {
+    font-size: 1.2rem;
+}
+
+/* Basic spacing */
+section {
+    margin-bottom: 1rem;
+    background-color: var(--background-light);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+/* Button containers */
+.review-content > div:last-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 1rem;
+    width: 100%;
 }
 
-.stat {
+/* Review controls */
+.review-controls {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-}
-
-.stat-label {
-    font-size: 0.875rem;
-    color: var(--text-muted);
-}
-
-.stat-value {
-    font-size: 1.125rem;
-    font-weight: 500;
-    color: var(--text-bright);
-}
-
-.progress-dates {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.date {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 1rem;
+    width: 100%;
+    margin: 1rem 0;
 }
 
-.date-label {
-    color: var(--text-muted);
-}
-
-.date-value {
-    color: var(--text-bright);
-}
-
-.icon-button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-bright);
-    font-size: 1rem;
-}
-
-.icon-button:hover {
-    color: var(--accent-color);
-}
-
-/* Next/Finish review buttons */
 .next-review,
 .finish-review {
-    width: 200px;
+    width: 100%;
+    max-width: 200px;
+    margin: 0.5rem auto;
     text-align: center;
-    padding: 0.75rem 1.5rem;
-    font-size: 1.1rem;
-    background-color: var(--primary-color);
-    color: var(--text-bright);
-    border: none;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.next-review:hover,
-.finish-review:hover {
-    background-color: var(--secondary-color);
-    border: none;
-}
-
-.next-review.error {
-    background-color: var(--error-color);
-}
-
-.next-review.error:hover {
-    background-color: #dc2626;
 } 
