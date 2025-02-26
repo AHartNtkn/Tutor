@@ -84,12 +84,12 @@
             margin-bottom: 1.5rem;
         }
 
-        #sides-slider {
+        #pieces-slider {
             width: 100%;
             padding: 0.5rem 0;
         }
 
-        #sides-display {
+        #pieces-display {
             display: block;
             text-align: center;
             margin-top: 0.5rem;
@@ -151,8 +151,8 @@
         </div>
         <div id="controls-section">
             <div id="slider-container">
-                <input type="range" id="sides-slider" min="3" max="20" value="3" />
-                <span id="sides-display">3 sides</span>
+                <input type="range" id="pieces-slider" min="2" max="20" value="2" />
+                <span id="pieces-display">2 pieces</span>
             </div>
             <button id="submit-button">Submit Answer</button>
         </div>
@@ -163,13 +163,13 @@
             constructor() {
                 this.titleSection = document.getElementById('title-section');
                 this.polygonSvg = document.getElementById('polygon-svg');
-                this.sidesSlider = document.getElementById('sides-slider');
-                this.sidesDisplay = document.getElementById('sides-display');
+                this.piecesSlider = document.getElementById('pieces-slider');
+                this.piecesDisplay = document.getElementById('pieces-display');
                 this.feedbackSection = document.getElementById('feedback-section');
                 this.submitButton = document.getElementById('submit-button');
                 
                 this.data = null;
-                this.sides = 3;
+                this.pieces = 2;
                 this.shadedSlices = new Set();
                 this.isAnswered = false;
                 
@@ -190,7 +190,7 @@
                 });
 
                 // Add event listeners
-                this.sidesSlider.addEventListener('input', () => this.updateSides());
+                this.piecesSlider.addEventListener('input', () => this.updatepieces());
                 this.submitButton.addEventListener('click', () => this.submitAnswer());
                 
                 // Signal that we're ready to receive data
@@ -202,10 +202,10 @@
                 this.isAnswered = false;
                 this.shadedSlices.clear();
                 
-                // Set default sides to 3
-                this.sides = 3;
-                this.sidesSlider.value = 3;
-                this.sidesDisplay.textContent = '3 sides';
+                // Set default pieces to 2
+                this.pieces = 2;
+                this.piecesSlider.value = 2;
+                this.piecesDisplay.textContent = '2 pieces';
                 
                 // Set up title
                 const numerator = data.numerator;
@@ -220,9 +220,9 @@
                 this.drawPolygon();
             }
             
-            updateSides() {
-                this.sides = parseInt(this.sidesSlider.value);
-                this.sidesDisplay.textContent = `${this.sides} sides`;
+            updatepieces() {
+                this.pieces = parseInt(this.piecesSlider.value);
+                this.piecesDisplay.textContent = `${this.pieces} pieces`;
                 this.shadedSlices.clear();
                 this.drawPolygon();
             }
@@ -235,9 +235,9 @@
                 const center = { x: 0, y: 0 };
                 
                 // Create slice paths
-                for (let i = 0; i < this.sides; i++) {
-                    const startAngle = (i * 2 * Math.PI / this.sides) - (Math.PI / 2);
-                    const endAngle = ((i + 1) * 2 * Math.PI / this.sides) - (Math.PI / 2);
+                for (let i = 0; i < this.pieces; i++) {
+                    const startAngle = (i * 2 * Math.PI / this.pieces) - (Math.PI / 2);
+                    const endAngle = ((i + 1) * 2 * Math.PI / this.pieces) - (Math.PI / 2);
                     
                     const startX = center.x + radius * Math.cos(startAngle);
                     const startY = center.y + radius * Math.sin(startAngle);
@@ -285,7 +285,7 @@
                 
                 // Calculate fraction of shaded slices
                 const shadedCount = this.shadedSlices.size;
-                const totalSlices = this.sides;
+                const totalSlices = this.pieces;
                 
                 // Determine if answer is correct
                 const targetNumerator = this.data.numerator;

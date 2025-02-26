@@ -702,7 +702,7 @@ class LessonManager {
 
         // Create iframe for the app
         this.currentApp = document.createElement('iframe');
-        this.currentApp.src = `knowledge_graphs/apps/${problem.type}.html`;
+        this.currentApp.src = `knowledge_graphs/apps/${problem.type}.html?t=${Date.now()}`;
         this.currentApp.style.width = '100%';
         this.currentApp.style.height = '400px';
         this.currentApp.style.border = 'none';
@@ -878,7 +878,7 @@ class ReviewManager {
         problemContainer.innerHTML = '';
         
         this.currentApp = document.createElement('iframe');
-        this.currentApp.src = `knowledge_graphs/apps/${problem.type}.html`;
+        this.currentApp.src = `knowledge_graphs/apps/${problem.type}.html?t=${Date.now()}`;
         this.currentApp.style.width = '100%';
         this.currentApp.style.height = '400px';
         this.currentApp.style.border = 'none';
