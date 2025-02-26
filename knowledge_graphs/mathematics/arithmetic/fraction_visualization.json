@@ -1,6 +1,7 @@
 {
     "id": "arithmetic_fraction_visualization",
     "title": "Visualizing Fractions with Shapes",
+    "problems_per_lesson": 5,
     "objectives": [
         "Visualize fractions using different shapes",
         "Shade shapes to represent given fractions",

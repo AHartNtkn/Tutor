@@ -647,11 +647,11 @@ class LessonManager {
             objectivesList.innerHTML = this.currentLesson.objectives
                 .map(obj => `<li>${obj}</li>`)
                 .join('');
-
+            
             // Explanation
             const explanationContent = this.view.querySelector('.explanation-content');
             explanationContent.innerHTML = formatContent(this.currentLesson.explanation.content);
-
+            
             // Worked Example
             const exampleProblem = this.view.querySelector('.example-problem');
             const exampleSolution = this.view.querySelector('.example-solution');
@@ -660,6 +660,12 @@ class LessonManager {
             exampleProblem.innerHTML = formatContent(this.currentLesson.worked_example.problem);
             exampleSolution.innerHTML = formatContent(this.currentLesson.worked_example.solution);
             exampleExplanation.innerHTML = formatContent(this.currentLesson.worked_example.explanation);
+
+            // Get number of problems to show (default to 8 if not specified)
+            const numProblems = this.currentLesson.problems_per_lesson || 8;
+            
+            // Take the first N problems from the list
+            this.selectedProblems = this.currentLesson.practice_problems.slice(0, numProblems);
 
             // Refresh MathJax if needed
             if (window.MathJax && this.currentLesson.explanation.mathJax) {
@@ -684,13 +690,13 @@ class LessonManager {
 
     loadProblem(index) {
         this.currentProblemIndex = index;
-        const problem = this.currentLesson.practice_problems[index];
+        const problem = this.selectedProblems[index];
         const practiceSection = this.view.querySelector('.lesson-practice');
         const problemCounter = practiceSection.querySelector('.problem-counter');
         const nextButton = practiceSection.querySelector('.next-problem');
 
         // Update problem counter
-        problemCounter.textContent = `Problem ${index + 1}/${this.currentLesson.practice_problems.length}`;
+        problemCounter.textContent = `Problem ${index + 1}/${this.selectedProblems.length}`;
 
         // Reset buttons
         nextButton.classList.add('hidden');
@@ -736,7 +742,7 @@ class LessonManager {
         const nextButton = this.view.querySelector('.next-problem');
         nextButton.classList.remove('hidden');
         
-        if (this.currentProblemIndex === this.currentLesson.practice_problems.length - 1) {
+        if (this.currentProblemIndex === this.selectedProblems.length - 1) {
             nextButton.textContent = 'Finish Lesson';
         } else {
             nextButton.textContent = 'Next Problem';
@@ -744,7 +750,7 @@ class LessonManager {
     }
 
     nextProblem() {
-        if (this.currentProblemIndex === this.currentLesson.practice_problems.length - 1) {
+        if (this.currentProblemIndex === this.selectedProblems.length - 1) {
             // If this was the last problem, complete the lesson
             this.completePractice();
         } else {
@@ -757,7 +763,7 @@ class LessonManager {
         // Update student progress
         await UI.currentStudent.updateProgress(this.currentLesson.id, {
             grade: 'good',  // First completion always counts as 'good'
-            example_id: this.currentLesson.practice_problems[this.currentProblemIndex].id
+            example_id: this.selectedProblems[this.currentProblemIndex].id
         });
 
         // Update UI
