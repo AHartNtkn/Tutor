@@ -25,6 +25,14 @@
             "directory": "arithmetic/basic_fractions"
         },
         {
+            "id": "arithmetic_fraction_visualization",
+            "name": "Visualizing Fractions with Shapes",
+            "prerequisites": [],
+            "tags": ["arithmetic", "fractions", "visualization"],
+            "content": "Representing fractions by shading parts of shapes.",
+            "directory": "arithmetic/fraction_visualization"
+        },
+        {
             "id": "arithmetic_adding_fractions_same_denominator",
             "name": "Adding Fractions with Same Denominator",
             "prerequisites": ["arithmetic_basic_fractions", "arithmetic_addition"],

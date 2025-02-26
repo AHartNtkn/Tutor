@@ -9,6 +9,7 @@
    - Each skill must have a concrete input state and output state
    - Use specific action verbs: "pan," "orbit," "add," "identify," "select"
    - Avoid abstract concepts: "understand," "know," "grasp," "comprehend"
+   - Skills may not be overtly stated in a text, but may be implied by demonstrations. For example, a math text may demonstrate geometric reasoning with fractions using a line divided into equal parts. Exercises involving such reasoning would correspond to observable skills that a text would most likely take for granted.
 
 3. For each skill, apply the "Single Performance Test":
    - Can a learner demonstrate mastery through one specific action?

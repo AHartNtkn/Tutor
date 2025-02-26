@@ -107,34 +107,29 @@ class Database {
 class ContentLoader {
     static async loadLesson(topicId) {
         try {
-            // First find which knowledge graph contains this topic
-            const indexResponse = await fetch(`knowledge_graphs/index.json?t=${Date.now()}`);
-            if (!indexResponse.ok) throw new Error('Failed to load index');
-            const indexData = await indexResponse.json();
+            // Only load the current knowledge graph's index
+            const graphId = UI.currentKnowledgeGraph;
+            if (!graphId) throw new Error('No knowledge graph selected');
+
+            const graphIndexResponse = await fetch(`knowledge_graphs/${graphId}/index.json?t=${Date.now()}`);
+            if (!graphIndexResponse.ok) throw new Error('Failed to load graph index');
+            const graphIndexData = await graphIndexResponse.json();
             
-            // Search through each knowledge graph
-            for (const graph of indexData.knowledge_graphs) {
-                // Load the graph's index
-                const graphIndexResponse = await fetch(`knowledge_graphs/${graph.id}/index.json?t=${Date.now()}`);
-                if (!graphIndexResponse.ok) continue;
-                const graphIndexData = await graphIndexResponse.json();
+            // Search through each subject in the current graph
+            for (const subject of graphIndexData.subjects) {
+                const subjectResponse = await fetch(`knowledge_graphs/${graphId}/${subject}?t=${Date.now()}`);
+                if (!subjectResponse.ok) continue;
+                const subjectData = await subjectResponse.json();
                 
-                // Search through each subject in the graph
-                for (const subject of graphIndexData.subjects) {
-                    const subjectResponse = await fetch(`knowledge_graphs/${graph.id}/${subject}?t=${Date.now()}`);
-                    if (!subjectResponse.ok) continue;
-                    const subjectData = await subjectResponse.json();
-                    
-                    const topic = subjectData.topics.find(t => t.id === topicId);
-                    if (topic) {
-                        // Load the lesson file directly from the topic's directory
-                        const response = await fetch(`knowledge_graphs/${graph.id}/${topic.directory}.json?t=${Date.now()}`);
-                        if (!response.ok) throw new Error('Failed to load lesson');
-                        return await response.json();
-                    }
+                const topic = subjectData.topics.find(t => t.id === topicId);
+                if (topic) {
+                    // Load the lesson file directly from the topic's directory
+                    const response = await fetch(`knowledge_graphs/${graphId}/${topic.directory}.json?t=${Date.now()}`);
+                    if (!response.ok) throw new Error('Failed to load lesson');
+                    return await response.json();
                 }
             }
-            throw new Error('Topic not found');
+            throw new Error('Topic not found in current knowledge graph');
         } catch (error) {
             console.error('Error loading lesson:', error);
             throw error;
@@ -641,6 +636,9 @@ class LessonManager {
             this.view.querySelector('.example-explanation').classList.add('hidden');
             this.view.querySelector('.show-solution').classList.remove('hidden');
 
+            // Helper function to handle newlines
+            const formatContent = (text) => text.replace(/\n/g, '<br>');
+
             // Populate lesson content
             this.view.querySelector('.lesson-title').textContent = this.currentLesson.title;
             
@@ -652,16 +650,16 @@ class LessonManager {
 
             // Explanation
             const explanationContent = this.view.querySelector('.explanation-content');
-            explanationContent.innerHTML = this.currentLesson.explanation.content;
+            explanationContent.innerHTML = formatContent(this.currentLesson.explanation.content);
 
             // Worked Example
             const exampleProblem = this.view.querySelector('.example-problem');
             const exampleSolution = this.view.querySelector('.example-solution');
             const exampleExplanation = this.view.querySelector('.example-explanation');
 
-            exampleProblem.innerHTML = this.currentLesson.worked_example.problem;
-            exampleSolution.innerHTML = this.currentLesson.worked_example.solution;
-            exampleExplanation.innerHTML = this.currentLesson.worked_example.explanation;
+            exampleProblem.innerHTML = formatContent(this.currentLesson.worked_example.problem);
+            exampleSolution.innerHTML = formatContent(this.currentLesson.worked_example.solution);
+            exampleExplanation.innerHTML = formatContent(this.currentLesson.worked_example.explanation);
 
             // Refresh MathJax if needed
             if (window.MathJax && this.currentLesson.explanation.mathJax) {
@@ -1192,20 +1190,27 @@ class UI {
 
         try {
             // First load the graph's index
-            const indexResponse = await fetch(`knowledge_graphs/${UI.currentKnowledgeGraph}/index.json`);
+            const indexResponse = await fetch(`knowledge_graphs/${UI.currentKnowledgeGraph}/index.json?t=${Date.now()}`);
             if (!indexResponse.ok) throw new Error('Failed to load graph index');
             const indexData = await indexResponse.json();
 
             // Then load all subjects and collect their topics
             let allTopics = [];
             for (const subject of indexData.subjects) {
-                const subjectResponse = await fetch(`knowledge_graphs/${UI.currentKnowledgeGraph}/${subject}`);
+                console.log('Loading subject data:', subject);
+                const subjectResponse = await fetch(`knowledge_graphs/${UI.currentKnowledgeGraph}/${subject}?t=${Date.now()}`);
                 if (!subjectResponse.ok) continue;
+                console.log('Subject response:', await subjectResponse.clone().text());
                 const subjectData = await subjectResponse.json();
+                console.log('Parsed subject data:', subjectData);
+                console.log('Current allTopics length:', allTopics.length);
+                console.log('Topics being added:', subjectData.topics);
                 allTopics = allTopics.concat(subjectData.topics);
+                console.log('AllTopics after concat:', allTopics);
             }
 
             const progress = UI.currentStudent.progress;
+            console.log('Current student progress:', progress);
             const now = new Date();
             const template = document.getElementById('card-template');
 
@@ -1244,25 +1249,38 @@ class UI {
             if (dueReviews.length < 25) {
                 const availableLessons = allTopics
                     .filter(topic => {
-                        // Check if all prerequisites have at least 3 reps
+                        console.log('Topic being filtered:', topic.id, topic.name);
+                        console.log('Topic prerequisites:', topic.prerequisites);
+                        
+                        // Check if this topic has never been started
+                        const topicProgress = progress[topic.id];
+                        console.log('Topic progress:', topicProgress);
+                        const notStarted = !topicProgress || topicProgress.reps === 0;
+                        console.log('Not started status:', notStarted);
+
+                        // If there are no prerequisites, the topic is available immediately if not started
+                        if (!topic.prerequisites || topic.prerequisites.length === 0) {
+                            console.log('No prerequisites, returning notStarted:', notStarted);
+                            return notStarted;
+                        }
+
+                        // Only check prerequisites if the topic has them
                         const prereqsMet = topic.prerequisites.every(prereqId => {
                             const prereqProgress = progress[prereqId];
                             return prereqProgress && 
-                                   prereqProgress.reps >= 3 &&
-                                   prereqProgress.next_review && 
-                                   new Date(prereqProgress.next_review) > now;
+                                   prereqProgress.reps >= 3;
                         });
 
-                        // Check if this topic has never been started
-                        const topicProgress = progress[topic.id];
-                        const notStarted = !topicProgress || topicProgress.reps === 0;
-
-                        return prereqsMet && notStarted;
+                        console.log('Prerequisites met:', prereqsMet);
+                        return notStarted && prereqsMet;
                     })
                     .slice(0, 25 - dueReviews.length);
 
+                console.log('Available lessons:', availableLessons);
+
                 // Add lesson cards
                 availableLessons.forEach(lesson => {
+                    console.log('Creating card for lesson:', lesson.id, lesson.name);
                     const clone = template.content.cloneNode(true);
                     const card = clone.querySelector('.card');
                     

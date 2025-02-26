@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            --primary-color: #686de0;
+            --primary-dark: #4834d4;
+            --primary-light: #a3a7e4;
+            --secondary-color: #30336b;
+            --text-color: #f5f6fa;
+            --text-light: #dcdde1;
+            --success-color: #44bd32;
+            --warning-color: #e1b12c;
+            --danger-color: #c23616;
+            --white: #f5f6fa;
+            --border-color: #4834d4;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            --background-dark: #2c2c54;
+            --background-light: #30336b;
+        }
+
+        body {
+            margin: 0;
+            padding: 1rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: var(--text-color);
+            line-height: 1.5;
+            background-color: var(--background-dark);
+        }
+
+        #app-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        #title-section {
+            background-color: var(--background-light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            font-size: 1.25rem;
+        }
+
+        #polygon-container {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            margin: 0 auto;
+            background-color: var(--background-light);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        svg {
+            cursor: pointer;
+        }
+
+        .polygon-slice {
+            fill: var(--text-light);
+            stroke: var(--border-color);
+            stroke-width: 2;
+            transition: fill 0.2s;
+        }
+
+        .polygon-slice.shaded {
+            fill: var(--primary-color);
+        }
+
+        #controls-section {
+            margin: 1.5rem auto;
+            background-color: var(--background-light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        #slider-container {
+            margin-bottom: 1.5rem;
+        }
+
+        #sides-slider {
+            width: 100%;
+            padding: 0.5rem 0;
+        }
+
+        #sides-display {
+            display: block;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 1rem;
+        }
+
+        #submit-button {
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin: 1rem auto 0;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        #submit-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        #submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #feedback-section {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background-color: var(--background-light);
+            box-shadow: var(--shadow);
+        }
+
+        #feedback-section.correct {
+            border-left: 4px solid var(--success-color);
+        }
+
+        #feedback-section.incorrect {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <div id="title-section"></div>
+        <div id="polygon-container">
+            <svg id="polygon-svg" width="300" height="300" viewBox="-150 -150 300 300"></svg>
+        </div>
+        <div id="controls-section">
+            <div id="slider-container">
+                <input type="range" id="sides-slider" min="3" max="20" value="3" />
+                <span id="sides-display">3 sides</span>
+            </div>
+            <button id="submit-button">Submit Answer</button>
+        </div>
+        <div id="feedback-section" class="hidden"></div>
+    </div>
+    <script>
+        class PolygonFractionApp {
+            constructor() {
+                this.titleSection = document.getElementById('title-section');
+                this.polygonSvg = document.getElementById('polygon-svg');
+                this.sidesSlider = document.getElementById('sides-slider');
+                this.sidesDisplay = document.getElementById('sides-display');
+                this.feedbackSection = document.getElementById('feedback-section');
+                this.submitButton = document.getElementById('submit-button');
+                
+                this.data = null;
+                this.sides = 3;
+                this.shadedSlices = new Set();
+                this.isAnswered = false;
+                
+                // Set up resize observer to handle dynamic content changes
+                const resizeObserver = new ResizeObserver(() => {
+                    window.parent.postMessage({
+                        type: 'resize',
+                        height: document.documentElement.scrollHeight
+                    }, '*');
+                });
+                resizeObserver.observe(document.body);
+                
+                // Listen for messages from parent
+                window.addEventListener('message', (event) => {
+                    if (event.data.type === 'initialize') {
+                        this.initialize(event.data.data);
+                    }
+                });
+
+                // Add event listeners
+                this.sidesSlider.addEventListener('input', () => this.updateSides());
+                this.submitButton.addEventListener('click', () => this.submitAnswer());
+                
+                // Signal that we're ready to receive data
+                window.parent.postMessage({ type: 'ready' }, '*');
+            }
+            
+            initialize(data) {
+                this.data = data;
+                this.isAnswered = false;
+                this.shadedSlices.clear();
+                
+                // Set default sides to 3
+                this.sides = 3;
+                this.sidesSlider.value = 3;
+                this.sidesDisplay.textContent = '3 sides';
+                
+                // Set up title
+                const numerator = data.numerator;
+                const denominator = data.denominator;
+                this.titleSection.textContent = `Make a shape that's ${numerator}/${denominator} shaded`;
+                
+                // Reset feedback section
+                this.feedbackSection.className = 'hidden';
+                this.feedbackSection.textContent = '';
+                
+                // Draw initial polygon
+                this.drawPolygon();
+            }
+            
+            updateSides() {
+                this.sides = parseInt(this.sidesSlider.value);
+                this.sidesDisplay.textContent = `${this.sides} sides`;
+                this.shadedSlices.clear();
+                this.drawPolygon();
+            }
+            
+            drawPolygon() {
+                // Clear previous polygon
+                this.polygonSvg.innerHTML = '';
+                
+                const radius = 120;
+                const center = { x: 0, y: 0 };
+                
+                // Create slice paths
+                for (let i = 0; i < this.sides; i++) {
+                    const startAngle = (i * 2 * Math.PI / this.sides) - (Math.PI / 2);
+                    const endAngle = ((i + 1) * 2 * Math.PI / this.sides) - (Math.PI / 2);
+                    
+                    const startX = center.x + radius * Math.cos(startAngle);
+                    const startY = center.y + radius * Math.sin(startAngle);
+                    const endX = center.x + radius * Math.cos(endAngle);
+                    const endY = center.y + radius * Math.sin(endAngle);
+                    
+                    // Create slice path
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    const d = `M ${center.x} ${center.y} L ${startX} ${startY} A ${radius} ${radius} 0 0 1 ${endX} ${endY} Z`;
+                    
+                    path.setAttribute('d', d);
+                    path.setAttribute('class', 'polygon-slice');
+                    path.setAttribute('data-index', i);
+                    
+                    // Add click event
+                    path.addEventListener('click', (e) => this.toggleSlice(i));
+                    
+                    // Apply shading if needed
+                    if (this.shadedSlices.has(i)) {
+                        path.classList.add('shaded');
+                    }
+                    
+                    this.polygonSvg.appendChild(path);
+                }
+            }
+            
+            toggleSlice(index) {
+                if (this.isAnswered) return;
+                
+                if (this.shadedSlices.has(index)) {
+                    this.shadedSlices.delete(index);
+                } else {
+                    this.shadedSlices.add(index);
+                }
+                
+                // Update UI
+                const path = this.polygonSvg.querySelector(`[data-index="${index}"]`);
+                path.classList.toggle('shaded');
+            }
+            
+            submitAnswer() {
+                if (this.isAnswered) return;
+                
+                this.isAnswered = true;
+                
+                // Calculate fraction of shaded slices
+                const shadedCount = this.shadedSlices.size;
+                const totalSlices = this.sides;
+                
+                // Determine if answer is correct
+                const targetNumerator = this.data.numerator;
+                const targetDenominator = this.data.denominator;
+                
+                // Check if the fractions are equivalent
+                const isCorrect = (shadedCount * targetDenominator) === (totalSlices * targetNumerator);
+                
+                // Show feedback
+                this.feedbackSection.className = isCorrect ? 'correct' : 'incorrect';
+                
+                if (isCorrect) {
+                    this.feedbackSection.textContent = `Correct! You've shaded ${shadedCount}/${totalSlices} of the shape, which is equivalent to ${targetNumerator}/${targetDenominator}.`;
+                } else {
+                    this.feedbackSection.textContent = `Not quite. You've shaded ${shadedCount}/${totalSlices} of the shape, but we needed a fraction equivalent to ${targetNumerator}/${targetDenominator}.`;
+                }
+                
+                this.feedbackSection.classList.remove('hidden');
+                
+                // Notify parent
+                window.parent.postMessage({
+                    type: 'answerSubmitted',
+                    isCorrect: isCorrect
+                }, '*');
+            }
+        }
+
+        // Initialize app when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new PolygonFractionApp();
+        });
+    </script>
+</body>
+</html>
