@@ -4,7 +4,7 @@
 Interactables are embeddable interactive applications that replace simple multiple-choice questions with engaging, interactive exercises. They provide a sandboxed environment where users manipulate state to demonstrate mastery.
 
 ## Implementation Requirements
-1. **Technology**: Implement using pure HTML and JavaScript with interactive canvas or SVGs
+1. **Technology**: Implement using pure HTML and JavaScript with interactive canvas or SVGs or pure DOM manipulation. If the idea cannot be done without it, you can use three.js. However, that's a last resort to use when the idea is intrinsically 3D and it's impracticable to use the other options. Beyond this, keep imports to a minimum.
 2. **File Structure**: Single self-contained HTML file with inline JavaScript
 3. **Location**: Store in the `knowledge_graphs/apps/` directory
 4. **Embedding**: Must be iframe-compatible and communicate with the parent page

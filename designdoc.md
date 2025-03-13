@@ -383,35 +383,57 @@ Similarly, reviews are interleaved by topic. That is, reviews will be on differe
 
 Generally speaking, two lessons are considered very related if they are close in the graph (e.g. they share a prerequisite). They are also considered related if they share tags or belong to the same topic. These are used to create a relatedness score which is used to sort new lessons and reviews when creating the reccomendations list.
 
+---
+## 6. Interactables
+
+For many problems, the best way to learn is through interacting with a toy or app structured in such a way that the user cannot pass without developing the correct intuition. The most basic kind of interactable is a quiz where the student is presented with a question and must answer among a collection of options. However, there is far more potential. 
+
+### 6.1 Examples
+
+- For teaching a student about the relation between fractions and geometry, they are presented with a circle and a prompt to shade in some fraction of the circle. There is a bar underneath whose slider dictates the number of even slices the circle is cut in. The user can click on a slice to shade it in. There's a submit button which will indicate if the correct amount of shading is put in. Importantly, it's flexible. Cutting into 8 slices and shading two (any two) slices will count as both 2/8 and 1/4.
+- For teaching simpler points about specific systems, an interface for presenting the system in such a way that the user can change parameters can be used. For example, if we're teaching about orbital mechanics, we may have an app that simulates two orbiting bodies and plots their center of mass. There may be sliders that control things like the masses, and manipulable arrows on the bodies controlling initial velocity. The student may be tasked with setting things up so the center of mass ends up at some point after the simulation runs for a few seconds.
+- For teaching about simple machines, a "zach-like" interface can be provided. This means we have a starting sandbox scenario with a few placed pieces the user can't edit, along with a "bag" of elements/machine parts like gears and/or pulleys that the user can drag and drop into the sandbox. Ultimately, the user is asked to meet some objective (connect gears so they run, make the given force able to lift an object using the right pulley configuration, etc.). Something similar is certainly true for many simulatable environments, such as electronics, other kinds of physics simulations, and programming.
+- For teaching about an algorithm or complex system, a simulation app can be built which puts the user in the roll of one of the components. For example, in an algorithm which has many choice points (if this then do that, choose the maximal among these options, etc), the student may be made to perform these tasks semi-manually as the algorithm proceeds. By acting as part of the algorithm, they must gain an understanding of what needs to be done when and how it connects to other things. 
+- For teaching complicated math definitions, the user will be given a formula building interface that includes the involved variables, involved operations, and maybe red herring operations and variables. The interface then prompts the user with a description for the intuition justifying some part of the definition. As parts are constructed, they become usable components for the formula builder for later steps. At each step, intuition is given for what the student is intended to construct. But the student is given a blank canvas and must write the definition themselves. The last step will construct the final definition, giving intuition for how the previously constructed pieces fit together. Importantly, the intuition segments should never just tell the student what they're supposed to do; they shouldn't just express the definition in English. Relations between the involved components should be described, and it's up to the student to intuit the definition from that.
+- For many formulas, a derivation or proof interface is necessary. At any given stage, we have a number of goals, and buttons to click corresponding to proof steps which transform and may split our goal. Some proof steps eliminate the goal, and the player "wins" when all goals are eliminated. This can be used to teach the proof techniques from a specific field. See the "natural numbers game" as an example.
+- Diagram manipulation for 2D syntax is possible. This would, in some ways, be similar to the previous entry, but formulas would be represented as diagrams (for example, string diagrams), and the interface would allow for simple manipulations corresponding to topological moves through simple mouse movements. Non-topological moves would be accessed similarly to proof steps in the above, but the funtoriality of the interface allows us to choose where to apply the rule instead of always applying it to the whole formula.
+
+### 6.2 Staged design
+
+Each interactable has different amounts of automation. In the limit, we want the student to perform the intuition in their head, but early on, it can be helpful to automate most or some of what's being taught. There can be different stages of interaction, corresponding to a sequence of skills, one a prerequisite of the other. For example, in a lesson on scientific notation, there's an interactable where the user is looking at a number, like 32,100,000 and their goal is to drag a pip , initially after the last 0, representing a decimal point to get the number into the form 3.21 x 10^7. As the pip moves to different positions, the exponent changes accordingly. In the next interactable, the same question is asked, but the user has to fill in the exponent themselves rather than it being kept track of. This idea is important for the design of interactables; by varying what is kept track of and what the user needs to remember, difficulty, and therefore reliance on intuition can be increased over time.
+
+When designing interactables, one should ask if different levels of automation can be used to create different levels of difficulty which can be introduced over time. Each stage should be a small increment over the last, only making the user keep track of one more thing they weren't keeping track of at the last stage.
+
+### 6.3 Multiple outputs
+
+It will be common for an interactable to have multiple solutions. Some tasks may be structured in such a way that the "next question" is asking for an alternative solution to the one the student gave, and the full "quiz" consists of finding most or all of a set of desired solutions.
 
 ---
-## 6. Additional Implementation Details
-### 6.1 Maximum Lesson/Review Slots
+## 7. Additional Implementation Details
+### 7.1 Maximum Lesson/Review Slots
 - The system enforces **25 total "cards"** on the home page (where each card is either a review or a next lesson item).
   - If 25 or more reviews exist, 0 next lessons are shown.
   - If fewer than 25 reviews exist, next lessons fill up to 25 total.
 
-### 6.2 Session Flow
+### 7.2 Session Flow
 1. **Load Home** → View progress, reviews, next lessons.
 2. **Pick a Review** → Possibly fail → triggers immediate remediation.
 3. **Pick a Lesson** → Explanation → Example → 8 Problems → Mark complete.
 4. **Finish** → Return to home.
 
-### 6.3 Import/Export
+### 7.3 Import/Export
 - **Buttons in the Top Bar**: "Import Progress" and "Export Progress".
 - **JSON-based**: The progress is serialized to a JSON file containing the student’s mastery states, schedule, XP.
 - **No reset**: If the user wants to start over, they manually import a blank state or use the dev tools to clear IndexedDB.
 
-### 6.4 Spaced Repetition Algorithm (Advanced Notes)
+### 7.4 Spaced Repetition Algorithm (Advanced Notes)
 - Currently, the system schedules a **new review** for a topic X days after success based on a modified SM-2 algorithm.
 - Each topic’s difficulty can accelerate or slow the interval.
 - For **predictive remediation**, the system calculates average "time spent" or "fail rate" for that topic across all lessons; if above a threshold, it boosts prerequisite reviews.
 
 ---
-## 7. Future Considerations (Post-MVP)
-1. **Interactive Elements**
-   - Beyond multiple choice: free text input with partial-credit recognition, drag-and-drop, dynamic hints.
-2. **Graphical Knowledge Graph**
+## 8. Future Considerations (Post-MVP)
+1. **Graphical Knowledge Graph**
    - For advanced debugging or teacher usage: display node/edge relationships.
-3. **Better Spacing Algorithm**
+2. **Better Spacing Algorithm**
    - Replace SM-2 with FSRS-5 (Free Spaced Repetition Scheduler) 
