@@ -408,6 +408,8 @@ When designing interactables, one should ask if different levels of automation c
 
 It will be common for an interactable to have multiple solutions. Some tasks may be structured in such a way that the "next question" is asking for an alternative solution to the one the student gave, and the full "quiz" consists of finding most or all of a set of desired solutions.
 
+### 6.4 Design exploration via methods in "https://www.joelsimon.net/lluminate"?
+
 ---
 ## 7. Additional Implementation Details
 ### 7.1 Maximum Lesson/Review Slots
